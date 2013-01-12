@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>acl1</TITLE>
+<META NAME="description" CONTENT="acl1">
+<META NAME="keywords" CONTENT="acl1">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=gb2312">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="acl1.css">
+
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">   
+<BR>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<P>
+
+<P>
+
+<H1><A NAME="SECTION00100000000000000000">
+序言</A>
+</H1>
+约翰麦卡锡和他的学生于1958年开始Lisp的首个实现工作. Lisp是Fortran之后
+仍然在使用的最古老的语言.<A NAME="tex2html1"
+  HREF="#foot8"><SUP>1</SUP></A> 更值得一提的是,它仍然处在编程语言技术的最前沿. 懂
+Lisp的程序员会告诉你,这种语言有某种东西使得它与众不同.
+
+<P>
+部分使Lisp与众不同的原因是它被设计成能够自己演变. 你能用Lisp定义新的
+Lisp操作符. 随着新的抽象概念越来越流行(比如面向对象编程),我们总是发现
+在Lisp中实现它们很容易. 就象DNA, 这样的语言不会过时.
+
+<P>
+
+<H1><A NAME="SECTION00110000000000000000">
+新的工具</A>
+</H1>
+为什么要学Lisp? 因为它能让你做其它语言中不能做的事情. 如果你仅想写一个
+函数返回小于<I>n</I>的非负整数的总和, 那么用Lisp和C是差不多的:
+<PRE>
+; Lisp                   /* C */
+(defun sum (n)           int sum(int n){
+  (let ((s 0))             int i, s = 0;
+    (dotimes (i n s)       for(i = 0; i &lt; n; i++)
+      (incf s i))))          s += i;
+                            return(s);
+                          }
+</PRE>
+如果你只想做这样简单的事,那用哪种语言是无关紧要的. 假设你想写一个函数
+接受数<I>n</I>, 返回一个<EM>函数</EM>: 它把<I>n</I>增加到它的自变量上去:
+<PRE>
+; Lisp 
+(defun addn (n)
+  #'(lambda (x)
+      (+ x n)))
+</PRE>
+在C语言中addn会是怎样的? 你根本写不出来.
+
+<P>
+你可能会想,谁会想要做这样的事情? 编程语言教你不要试图去做它们不提供的
+事. 你用某种语言写程序的时候,你得用那种语言思考问题,而且想要你不能描述
+的东西是很因难的. 我刚开始写程序--用Basic--的时候,我并不想要递归,因
+为我根本不知道有这么回事. 我用Basic思考. 我只有递推算法的概念,为什么我
+想要递归呢? 
+
+<P>
+如果你不渴望逻辑<EM>封装</EM>(上面的例子中就使用了它),请相信, 目前Lisp程
+序员一直在使用它. 很难找到任意长度的Lisp代码不利用封装的. 到112页你会
+自己使用它.
+
+<P>
+封装只是我们不能在其它语言中找到的抽象概念之一. 另外一个更有价值的Lisp
+的独特特征是Lisp程序是用Lisp的数据结构来表示的. 这意味着你可以编写能写
+程序的程序. 人们真的需要这个吗? 是的--它们叫做<EM>宏</EM>, 有经验的程序
+员也一直在使用它. 到173页你就可以写自己的宏了.
+
+<P>
+有了宏,封装,和运行时类型,Lisp超过了面向对象编程. 如果你理解上面这句话,
+也许你不需要读这本书了. 你得相当理解Lisp才能看到为什么这不是假话. 但这
+不仅仅是说说而已. 这是一个重要的论点,它的证明在第17章用代码明确地写出
+来了.
+
+<P>
+第2章到第13章会逐渐地介绍所有你需要理解第17章的代码的概念. 你的努力会
+有所回报,打个比方: 你在C++中编程会感觉到窒息,就象有经验的C++程序员用
+Basic编程会感到窒息一样. 更令人鼓舞的可能是,如果我们思考一下这种感觉从
+何而来. Basic令习惯C++的人窒息是因为有经验的C++程序员知道有无法在Basic
+中表达的技术. 同样地, 学习Lisp不仅是让你学会了一门新的语言--它会教你
+新的更强大的考虑程序的方法.
+
+<P>
+
+<H1><A NAME="SECTION00120000000000000000">
+新的技术</A>
+</H1>
+就象上一节提到的,Lisp提供其它语言不能提供的工具. 但远远不止这些. 单独
+地讲,伴随Lisp的新东西--自动内存管理,显式的类型,封装,等等--每一项
+都使编程更加容易. 它们合在一起组成了一个临界值使得产生一种新的编程方法
+成为可能. 
+
+<P>
+Lisp被设计成可扩展的: 它让你定义自己的操作符. 因为Lisp是由和你的程序一
+样的函数和宏构成的. 所以扩展Lisp和写一段Lisp程序一样容易. 事实上它是这
+么容易(和有用)以至于扩展这种语言成了标准的实践. 当你写程序向下逼近语言
+的时候, 你也在构造语言向上逼近你的程序. 你不但至上而下也至下而上工作.
+
+<P>
+几乎所有的程序都可以从让语言裁剪得以适应自己的需要中获得好处, 但程序越
+复杂, 自下而上设计法就显得越有价值. 一个自下而上的程序可以写成一系列的
+层, 每一层担当上一层的编程语言. T<SMALL>E</SMALL>X是最早用这种方法写的程序之一. 你可
+以用任何语言自下而上设计程序,但对这种风格来说,Lisp是最最自然的运载工具.
+
+<P>
+自下而上编程法自然而然地产生可扩展的软件. 如果你始终坚持自下而上编程原
+则直到你程序的最高层, 那么这一层就成为用户的可编程语言. 可扩展性的思想
+深深地扎根于Lisp, 使得它成为编写可扩展软件的理想语言.  1980年代最成功
+的程序中的三个提供了Lisp作为扩展语言: Gnu Emacs, Autocad, 和Interleaf.
+
+<P>
+自下而上也是获得可重复使用软件的最好方法. 编写可复用软件的本质是把共性从个
+性中分离出来.  而自下而上法天然就创造了这种分离. 不是把你所有的精力花
+在编写一个巨大的应用上, 而是用部分精力去构造一
+种语言, 用部分精力(比例相对小些)在这种语言上面写你的应用. 和应用有关的
+特性都集中在最上层, 以下的层可以组成一种语言, 用来编写和这个应用类似的
+应用--还有什么会比编程语言更具可复用性的呢?
+
+<P>
+Lisp让你不仅写出更复杂的程序, 而且写得更快.  Lisp程序往往很短--这种语
+言给了你更大的概念, 所以你不需要用多少.  就象Frederick Brooks指出的,写程序所花的时间通
+常取决于它的长度.  因此这个单独的事实意味着编写Lisp程序花的时间较少.
+这种效应被Lisp的动态特性放大: 在Lisp中, 编辑-编译-测试循环是如此之短,
+以致编程是实时的. 
+
+<P>
+更大的抽象和交互式的环境能改变各种组织开发软件的方式.  术语``快速原型''
+描述了一种首先在Lisp中使用的编程法: 在Lisp中, 你可以用比写一个规格说明
+更少的时间写出一个原型来, 而且这种原型如此抽象, 可以作为一个比用英语写
+的更好的规格说明.  还有Lisp让你做出从原型到产品软件的平*的转变. 当编写
+Lisp程序时考虑到速度,经过现代编译器的编译,它们和任何用其它高级语言写的
+程序跑得一样快.
+
+<P>
+除非你相当熟悉Lisp,本序言象是一堆夸夸其谈和没有意义的声明.  Lisp胜过面
+向对象编程?  你构造语言逼近你的程序?  Lisp编程是实时的?  这些话是什么
+意思?  现在这些说法就象一些空的湖泊.  随着你学到更多实际的Lisp特点,看
+到更多的有指导意义的程序范例, 它们就会被实际经验装满, 而有了明确的形状.
+
+<P>
+
+<H1><A NAME="SECTION00130000000000000000">
+新的方法</A>
+</H1>
+本书的目标之一是不仅仅解释Lisp语言,而是一种由Lisp造成的新方法.  这是一
+种你在将来会见得更多的方法.  随着编程环境变得更强大, 编程语言变得更抽
+象, Lisp编程风格正逐渐取代旧的计划-然后-实现的模式.
+
+<P>
+在旧的模式中, 错误(bug)永远不该出现.  事先辛苦作出的周密规格说明被期
+望来保证程序完美地运行.  理论上听起来不错.  不幸的是, 规格说明都是人写
+的, 也是由人来实现的.  实际的结果是, 计划-然后-实现方法工作得不太好.
+
+<P>
+作为OS/360工程的经理, Frederick Brooks非常熟悉这种传统的方法.  他也非
+常熟悉它的后果:
+<BLOCKQUOTE>
+任何OS/360的用户很快意识到它还应该做得多好...而且产品已经晚了, 它用
+了比原计划多的内存,成本是估计的好几倍,而且运行一直不太好,直到第一个版
+本之后的好几个版本.<A NAME="tex2html2"
+  HREF="#foot23"><SUP>2</SUP></A>
+</BLOCKQUOTE>
+这就是对那个时代最成功系统之一的描述.
+
+<P>
+旧模式的问题是它忽略人的局限性. 在旧模式中,你打赌规格说明不会有严重的
+缺陷,实现它们是一桩把它们翻译成代码的简单事情. 经验证明这实在是一个糟
+糕的打赌. 如果赌规格说明会搞错, 代码充满错误会更保险些.  
+
+<P>
+这其实就是新编程模式所假定的. 它设法尽量降低错误的成本,而不是希望人
+们不犯错误. 错误的成本是改正它所花的时间. 使用强大的语言和优秀的编程环
+境, 这种成本会极大地降低. 编程设计可以较少地依赖于计划,更多地依赖于探
+索.
+
+<P>
+计划是一种必要的恶. 它是对风险的反应: 工作越是危险,预先做好计划也就越
+重要. 强大的工具降低了风险, 也降低了计划的需要. 程序的设计可以从实现它
+的经验中受益--这可能是最有用的信息来源.
+
+<P>
+Lisp风格自1960年代以来一直朝这个方向演化. 你在Lisp中可以如此快速地写出
+原型,以至于你能经历好几个设计和实现的循环, 而在旧的模式中,你可能刚写完
+规格说明. 你不必过于担心设计缺陷,因为你会更早地发现它们. 你也不必过于
+担心错误(bugs). 当你用函数风格编程,错误只有局部的影响. 当你使用一种很
+抽象的语言,某些错误(例如孤悬指针)就永远不会出现了,而剩下的错误很容易找,
+因为你的程序更短了. 当你有交互式开发环境时,你能立即修正错误,不必经历编
+辑,编译,测试的漫长过程. 
+
+<P>
+Lisp风格这么发展是因为它结出了成果. 听起来有点奇怪,少些计划意味着更好
+的设计. 技术史上相似的例子不胜枚举. 一个类似的事件发生在十五世纪的绘画
+界里. 在油画颜料流行之前,画家用一种叫蛋彩的物质作画,它不能混合或覆盖. 出错
+的高昂代价使画家变得保守. 后来随着油画颜料的出现,作画风格有了极大的改
+变. 油画颜料``允许第二次思考.''<A NAME="tex2html3"
+  HREF="#foot25"><SUP>3</SUP></A>它为因难主题的处理,例如人物画等提供了
+决定性的有利条件.
+
+<P>
+新介质不仅使画家作画更容易了. 它使新的更有抱负的作画方式成为可能.
+Janson写到:
+<BLOCKQUOTE>
+如果没有油画颜料,佛兰德大师们的征服可见的现实的口号就会大打折扣. 于是从
+技术的角度来看,他们也当之无愧地称得上``现代绘画之父'',因为油画颜料从此
+成为画家的基本介质.<A NAME="tex2html4"
+  HREF="#foot27"><SUP>4</SUP></A>
+</BLOCKQUOTE>
+作为一种材料,蛋彩并不比油画颜料逊色. 但油画颜料的弹性给了想象力更大的
+空间--这是决定性的因素.
+
+<P>
+程序设计正经历着相似的变革.  新的介质是``面向对象的动态语言''--即
+Lisp. 不是说我们所有的软件在几年内都要用Lisp来写. 从蛋彩到油彩的过渡也
+不是一夜之间完成的; 油彩开始只在一些领风气之先的艺术中心流行,而且经常
+结合着蛋彩使用. 我们现在似乎正处在这个阶段. Lisp在大学,实验室和一些处于
+前沿的公司中使用. 同时从Lisp那儿借用的思想越来越多地出现在主流中: 交互
+式开发环境,无用单元收集,运行时类型仅是其中几例.
+
+<P>
+强大的工具正在减轻探索的风险. 这对程序员来说是个好消息,因为它意味着我
+们能进行更有抱负的项目. 油彩的应用的确有这样的效果. 它被采用后的时期正
+是绘画的黄金年代. 类似的迹象已经发生在程序设计领域.
+
+<H1><A NAME="SECTION00200000000000000000">
+About this document ...</A>
+</H1>
+ <P>
+This document was generated using the
+<A HREF="http://www-texdev.mpce.mq.edu.au/l2h/docs/manual/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2K.1beta (1.48)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<BR>
+Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>-split=0 acl1.tex</TT>
+<P>
+The translation was initiated by Dai Yuwen on 2004-04-03
+<BR><HR><H4>Footnotes</H4>
+<DL>
+<DT><A NAME="foot8">...
+仍然在使用的最古老的语言.</A><A NAME="foot8"
+ HREF="acl1.html#tex2html1"><SUP>1</SUP></A>
+<DD> McCarthy, John. Recursive Functions of Symbolic Expressions
+and their Computation by Machine, Part I. CACM, 3:4 (April
+1960),pp. 184-195.
+
+<DT><A NAME="foot23">...
+本之后的好几个版本.</A><A NAME="foot23"
+ HREF="acl1.html#tex2html2"><SUP>2</SUP></A>
+<DD>Brooks, Frederick P. The Mythical Man-Month.  Addison-Wesley,
+Reading (MA), 1975, p. 16.
+</BLOCKQUOTE>
+<P>
+<BLOCKQUOTE>
+快速原型法不仅是一种更快或更好地写程序的方法, 有些程序可能不用此法就根本
+写不出来.
+</BLOCKQUOTE>
+<P>
+<BLOCKQUOTE>
+即使是最有雄心的人也会在巨大的工作面前退缩. 如果能使自己相信某件事不用
+费很大劲儿(哪怕从表面上看),从它做起就会容易些. 这就是为什么这么多大事
+是从小事开始的. 快速原型法让我们从小事做起.
+
+
+<DT><A NAME="foot25">... 油画颜料``允许第二次思考.''</A><A NAME="foot25"
+ HREF="acl1.html#tex2html3"><SUP>3</SUP></A>
+<DD>Murray, Peter and Linda.  The Art of the Renaissance.  Thames
+and Hudson, London, 1963, p. 85.
+
+<DT><A NAME="foot27">...
+成为画家的基本介质.</A><A NAME="foot27"
+ HREF="acl1.html#tex2html4"><SUP>4</SUP></A>
+<DD> Janson, W. J.  History of Art, 3rd Edition. Abrams, New York,
+1986, p. 374.
+</BLOCKQUOTE>
+<P>
+<BLOCKQUOTE>
+这个类比只适用于作在画布上的画. 画在墙上的画仍旧用壁画颜料. 我也不是说
+绘画风格是由技术变迁驱动的; 相反的说法可能更接近事实.
+
+
+</DL><HR>
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">   
+<BR>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Dai Yuwen
+2004-04-03
+</ADDRESS>
+</BODY>
+</HTML>

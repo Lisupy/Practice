@@ -1,0 +1,52 @@
+[33mcommit 0406c028c7a0cb1404246273af2e3130017f617a[m
+Author: darrenhp <darrenhp@gmail.com>
+Date:   Sun Oct 21 02:09:47 2012 +0800
+
+    ex2.53-ex2.55
+
+[1mdiff --git a/ch02/ex2.53-ex2.55.rkt b/ch02/ex2.53-ex2.55.rkt[m
+[1mnew file mode 100644[m
+[1mindex 0000000..86debef[m
+[1m--- /dev/null[m
+[1m+++ b/ch02/ex2.53-ex2.55.rkt[m
+[36m@@ -0,0 +1,39 @@[m
+[32m+[m[32m#lang scheme[m
+[32m+[m
+[32m+[m
+[32m+[m[32m"====Ex2.53"[m
+[32m+[m[32m"(a b c)"[m
+[32m+[m[32m(list 'a 'b 'c)[m
+[32m+[m
+[32m+[m[32m"((george))"[m
+[32m+[m[32m(list (list 'george))[m
+[32m+[m
+[32m+[m[32m"(y1 y2)"[m
+[32m+[m[32m(cdr '((x1 x2) (y1 y2)))[m
+[32m+[m
+[32m+[m[32m"#f"[m
+[32m+[m[32m(pair? (car '(a short list)))[m
+[32m+[m
+[32m+[m[32m"#f"[m
+[32m+[m[32m(memq 'red '((red shoes) (blue socks)))[m
+[32m+[m
+[32m+[m[32m"(red shoes blue socks)"[m
+[32m+[m[32m(memq 'red '(red shoes blue socks))[m
+[32m+[m
+[32m+[m[32m"====Ex2.54"[m
+[32m+[m[32m(define (my-equal? a b)[m
+[32m+[m[32m  (cond ((null? a) (null? b))[m
+[32m+[m[32m        ((eq? (car a) (car b)) (my-equal? (cdr a) (cdr b)))[m
+[32m+[m[32m        (else false)))[m
+[32m+[m[41m                   [m
+[32m+[m[32m(equal? '(this is a list) '(this is a list))[m
+[32m+[m[32m(my-equal? '(this is a list) '(this is a list))[m
+[32m+[m[32m(equal? '(this is a list) '(this (is a) list))[m
+[32m+[m[32m(my-equal? '(this ia a list) '(this (is a) list))[m
+[32m+[m
+[32m+[m[32m"====Ex2.55"[m
+[32m+[m[32m;因为 'abracadabra 在解析器里是 (quote 'abracadabra)[m
+[32m+[m[32m;然后 ''abracadabra 就是 '(quote 'abracadabra)[m
+[32m+[m[32m;因此 (car ''abracadabra) 等价于 (car '(quote 'abracadabra))[m
+[32m+[m[32m (car ''abracadabra)[m
+[32m+[m[32m (car '(quote 'abracadabra))[m
+\ No newline at end of file[m

@@ -1,0 +1,1 @@
+("5.3" ("96e629a077c8614ed0ca4bcaca206afd30cdcba9" . "cc18ced98081f9fec460172e55ca9eb9d67963f8") (collects #"scheme" #"main.rkt") #"C:\\Users\\Administrator\\AppData\\Roaming\\Racket\\planet\\300\\5.3\\cache\\soegaard\\sicp.plt\\2\\1\\sicp.rkt" (collects #"errortrace" #"errortrace-key.rkt") (collects #"scheme" #"lang" #"reader.rkt"))

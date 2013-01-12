@@ -1,0 +1,1134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>acl2</TITLE>
+<META NAME="description" CONTENT="acl2">
+<META NAME="keywords" CONTENT="acl2">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=gb2312">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2K.1beta">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="acl2.css">
+
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">   
+<BR>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00100000000000000000">
+欢迎来到Lisp的世界</A>
+</H1><TT>
+本章的目标是尽快让你编程. 在本章结束的时候,你会掌握足够的Common Lisp的
+知识,可以开始写程序了.
+
+</TT>
+<H1><A NAME="SECTION00110000000000000000">
+范式(form)</A>
+</H1><TT>
+你可以通过使用Lisp而学习它,这是千真万确的,因为Lisp是交互式语言. 任何
+Lisp系统都包含一个叫做顶层(toplevel)的交互式前端. 你在顶层中输入Lisp表
+达式,系统打印它们的值.
+
+Lisp通常打印一个提示符表示它正在等待你的输入. 许多Common Lisp的实现用<IMG
+ WIDTH="16" HEIGHT="28" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$&gt;$">
+作为顶层提示符. 我们在这儿也用此符号.
+
+最简单的Lisp表达式之一是一个整数. 如果我们在提示符后面输入1,
+</TT><PRE>
+&gt; 1
+1
+&gt;
+</PRE><TT>
+系统会打印它的值,跟着另一个提示符,表示它在等待更多的输入.
+
+在这种情况下,打印出来的值和我们输入的一样. 象1这样的数叫做自身求值的.
+当我们输入一个需要做些求值工作的表达式时,事情变得有趣起来. 例如,如果想
+把两个数加起来,我们输入:
+</TT><PRE>
+&gt; (+ 2 3)
+5
+</PRE><TT>
+在表达式<TT>(+ 2 3)</TT>中,<TT>+</TT>叫做操作符,数<TT>2</TT>和<TT>3</TT>叫做变元.
+
+在日常生活中我们会把此表达式写为<TT>2 + 3</TT>,但在Lisp中我们把<TT>+</TT>写
+在最前面,后面跟着变元,整个表达式被一对括号围住:<TT>(+ 2 3)</TT>. 因为操作
+符在前,这叫做前缀表示法. 一开始这样写表达式有点怪,但事实上这种表示法是
+Lisp最好的东西之一.
+
+比如,我们想把三个数加起来,用通常的表示法我们要写<TT>+</TT>两次:
+</TT><PRE>
+2 + 3 + 4
+</PRE><TT>
+而在Lisp中我们仅需增加一个变元:
+</TT><PRE>
+&gt; (+ 2 3 4)
+</PRE><TT>
+通常我们用<TT>+</TT>,它必须有两个变元:一个在左边,一个在右边. 前缀表示法的
+弹性意味着,在Lisp中,<TT>+</TT>可以接受任意数目的变元,包括零个:
+</TT><PRE>
+&gt; (+)
+0
+&gt; (+ 2)
+2
+&gt; (+ 2 3)
+5
+&gt; (+ 2 3 4)
+9
+&gt; (+ 2 3 4 5)
+14
+</PRE><TT>
+因为操作符可以接受不同数目的变元,我们需要用括号指示表达式的开始和结束.
+
+表达式可以嵌套. 即表达式中的变元本身可能是个复杂的表达式:
+</TT><PRE>
+&gt; (/ (- 7 1) (- 4 2))
+3
+</PRE><TT>
+用自然语言来说,七减一的结果被四减二的结果除. 
+
+另一个Lisp表示法的漂亮之处是:它无所不包. 所有的Lisp表达式要么是象1这样
+原子(atom),要么是放在括号中由零个或多个表达式组成的表(list). 这些是合
+法的Lisp表达式:
+</TT><PRE>
+        2   (+ 2 3)   (+ 2 3 4)   (/ (- 7 1) (- 4 2))
+</PRE><TT>
+正如我们将要看到的,所有的Lisp代码都采取这种形式. 象C这样的语言有着更复
+杂的语法:算术表达式用中缀表示法;函数调用类似前缀表示法,自变量用逗号隔
+开;表达式用分号隔开;而代码块用花括号分隔. 在Lisp中我们用单一的记号表达
+所有这些概念.
+
+</TT>
+<H1><A NAME="SECTION00120000000000000000">
+求值</A>
+</H1><TT>
+在上一节中,我们在顶层里输入表达式,Lisp显示它们的值. 在这节里我们仔细观
+察一下表达式是如何求值的.
+
+在Lisp中,+是一个函数,形如(+ 2 3)的表达式是函数调用. 当Lisp对函数调用求
+值时,它做这样两步:
+</TT>
+
+<OL>
+<LI>首先变元从左至右被求值. 在此例中,每个变元求值到自身,所以变元的值
+分别是2和3.
+</LI>
+<LI>变元的值传给以操作符命名的函数. 在此例中,即+函数,它返回5.
+</LI>
+</OL><TT>
+
+如果任何变元本身是函数调用,它们按上述规则求值. 这是对(/ (- 7 1) (- 4
+2))求值时发生的情况:
+</TT>
+
+<OL>
+<LI>Lisp计算(- 7 1): 7求值为7,1求值为1. 它们被传给函数-,它返回6.
+</LI>
+<LI>Lisp计算(- 4 2): 4求值为4,2求值为2. 它们被传给函数-,它返回2.
+</LI>
+<LI>6和2的值传给函数/,它返回3.
+</LI>
+</OL><TT>
+
+并不是所有的Lisp操作符都是函数,但大多数都是. 而函数总是按这种方式求值
+的. 变元从左至右被求值,它们的值被传给函数,函数返回整个表达式的值. 这叫
+做Common Lisp的求值规则.
+
+一个不遵守上述规则的操作符是quote. quote是一个特殊操作符,这意味着它有
+自己独特的求值规则. 这个规则是:什么也不做. quote接受一个变元,并且一字
+不差地返回它:
+</TT><PRE>
+&gt; (quote (+ 3 5))
+(+ 3 5)
+</PRE><TT>
+
+为了方便,Common Lisp定义'作为quote的简记法. 通过在任何表达式前面加上'
+你能获得与调用quote同样的效果:
+</TT><PRE>
+&gt; '(+ 3 5)
+(+ 3 5)
+</PRE><TT>
+用简记法比用quote普遍得多.
+
+Lisp提供quote作为一种保护表达式以防被求值的手段. 下一节会解释这种保护
+是多么有用.
+
+</TT>
+<P></P>
+<TT>
+<FONT SIZE="-1">
+从麻烦中解脱出来
+
+如果你输入了一些Lisp不能理解的东西,它会打印一条出错信息并把你带到一个
+叫中断循环(break loop)的顶层中去. 中断循环给了有经验的程序员弄清出错原
+因的机会, 不过一开始你唯一需要知道的事是如何从中断循环中出来. 如何返回
+顶层取决于你用的Lisp环境. 在这个假设的环境里,用:abort出来:
+</FONT></TT><PRE>
+&gt; (/ 1 0)
+Error: Division by zero.
+       Options: :abort, :backtrace
+&gt;&gt; :abort
+&gt;
+</PRE><TT><FONT SIZE="-1">
+附录A展示了如何调试Lisp程序,以及一些最常见错误的例子.
+
+</FONT></TT>
+<H1><A NAME="SECTION00130000000000000000">
+数据</A>
+</H1><TT>
+Lisp提供所有我们能在其它语言中找得到的数据类型,和一些我们找不到的. 一
+种我们早已使用的数据类型是整数,它写为一列数字:256. 另一种和其它语言一
+样有的是字符串,它表示为一列用双引号括起来的字符:"ora et labora". 整数
+和字符串都求值到自身.
+
+另两种我们不常在其它语言中发现的是<EM>符号</EM>和<EM>表</EM>. 符号是单词. 通
+常它们被转换成大写,不管你如何输入:
+</TT><PRE>
+&gt; 'Artichoke
+ARTICHOKE
+</PRE><TT>
+符号(通常)不求值为自身,因此如果你想引用一个符号,请象上面那样用'引用它.
+
+表表示为被括号包围的零个或多个元素. 元素可以是任何类型,包括表. 你必须
+引用表,否则Lisp会以为它是函数调用:
+</TT><PRE>
+&gt; '(my 3 "Sons")
+(MY 3 "Sons")
+&gt; '(the list (a b c) has 3 elements)
+(THE LIST (A B C) HAS 3 ELEMENTS)
+</PRE><TT>
+请注意一个引号保护整个表达式,包括里面的表达式.
+
+你可以调用list来构造表. 因为list是一个函数,它的变元被求值. 这是+调用在
+list调用里的例子:
+</TT><PRE>
+&gt; (list 'my (+ 2 1) "Sons")
+(MY 3 "Sons")
+</PRE><TT>
+
+现在我们处于欣赏Lisp最非同寻常特征之一的位置上. Lisp程序表达为表. 如果
+变元的机动性和优雅性没能说服你Lisp记号是一种有价值的工具,这点应该能使
+你信服. 这意味着Lisp程序可以生成Lisp代码. Lisp程序员能(而且经常)为自己
+编写能写程序的程序.
+
+我们到第10章才考虑这种程序,但即使在现阶段理解表达式和表的关系也是很重
+要的,而不是被它们弄糊涂. 这就是为何我们使用quote. 如果一个表被引用了,
+求值返回它本身; 如果没有被引用,它被认为是代码,求值返回它的值:
+</TT><PRE>
+&gt; (list '(+ 2 1) (+ 2 1))
+((+ 2 1) 3)
+</PRE><TT>
+此处第一个变元被引用了,所以生成了一个表. 第二个变元没有被引用,视之为函
+数调用,得出一个数字.
+
+在Common Lisp中有两种方法表示空表. 你可用一对不包含任何东西的括号来表
+示空表,或用符号nil来表示它. 你用哪种方法表示空表都没有关系,不过它会被
+显示成nil:
+</TT><PRE>
+&gt; ()
+NIL
+&gt; nil
+NIL
+</PRE><TT>
+你不必引用nil(虽然这也没什么害处)因为nil求值到自身.
+
+</TT>
+<H1><A NAME="SECTION00140000000000000000">
+表的操作</A>
+</H1><TT>
+函数cons构造表. 如果它的第二个变元是表,它返回一个新表,新表的第一个元素
+就是第一个变元:
+</TT><PRE>
+&gt; (cons 'a '(b c d))
+(A B C D)
+</PRE><TT>
+
+我们可以通过把新元素cons到空表来构造新表. 我们在上一节见到的list函数只
+不过是一个把几样东西cons到nil上去的方便办法:
+</TT><PRE>
+&gt; (cons 'a (cons 'b nil))
+(A B)
+&gt; (list 'a 'b)
+(A B)
+</PRE><TT>
+
+基本的提取表中元素的函数是car和cdr.<A NAME="tex2html1"
+  HREF="#foot62"><SUP>1</SUP></A> 表的car就是它的第一个元素,而
+cdr是第一个元素后面的所有东西:
+</TT><PRE>
+&gt; (car '(a b c))
+A
+&gt; (cdr '(a b c))
+(B C)
+</PRE><TT>
+你能用car和cdr的组合来取得表中任何元素. 如果你想取第三个元素,可以这样:
+</TT><PRE>
+&gt; (car (cdr (cdr '(a b c d))))
+C
+</PRE><TT>
+但是,你可以用third更容易地做同样的事:
+</TT><PRE>
+&gt; (third '(a b c d))
+C
+</PRE>
+<H1><A NAME="SECTION00150000000000000000">
+真值</A>
+</H1><TT>
+符号t是Common Lisp中表示真的缺省值. 就象nil,t求值到自身. 函数listp返回
+真如果它的变元是一个表:
+</TT><PRE>
+&gt; (listp '(a b c))
+T
+</PRE><TT>
+
+一个函数叫做断言如果它的返回值被解释成真或假. Common Lisp的断言的名
+字通常以p结尾.
+
+假在Common Lisp中用nil(空表)来表示. 如果我们传给listp的变元不是表,它返
+回nil:
+</TT><PRE>
+&gt; (listp 27)
+NIL
+</PRE><TT>
+
+因为nil扮演两个角色,函数null返回真如果它的变元是空表:
+</TT><PRE>
+&gt; (null nil)
+T
+</PRE><TT>
+而函数not返回真如果它的变元是假:
+</TT><PRE>
+&gt; (not nil)
+T
+</PRE><TT>
+它们完全做的是同样的事情.
+
+要if是Common Lisp中最简单的条件语句. 它一般接受三个变元:一个测试表达式,
+一个then表达式和一个else表达式. 测试表达式被求值. 如果它返回真,则then
+表达式被求值并返回结果. 如果它返回假,则else表达式被求值并返回它的结果:
+</TT><PRE>
+&gt; (if (listp '(a b c))
+      (+ 1 2)
+      (+ 5 6))
+3
+&gt; (if (listp 27)
+      (+ 1 2)
+      (+ 5 6))
+11
+</PRE><TT>
+
+就象quote,if是特殊操作符. 它不能用函数来实现,因为函数调用的变元总是要
+求值的,而if的特点是只有最后两个变元中的一个被求值.
+
+if的最后一个变元是可选的. 如果你省略它,它缺省为nil:
+</TT><PRE>
+&gt; (if (listp 27) 
+      (+ 2 3))
+NIL
+</PRE><TT>
+
+虽然t是真的缺省表示,任何不是nil的东西在逻辑上下文中被认为是真:
+</TT><PRE>
+&gt; (if 27 1 2)
+1
+</PRE><TT>
+
+逻辑操作符and和or就象条件语句. 两者都接受任意数目的变元,但只求值能够确
+定返回值的数目的变元. 如果所有的变元都是真(不是nil),那么and返回最后变
+元的值:
+</TT><PRE>
+&gt; (and t (+ 1 2))
+3
+</PRE><TT>
+但如果其中一个变元是假,所有它后面的变元都不求值了. or也类似,只要它碰到
+一个是真的变元就继续求值了.
+
+这两个操作符是宏. 就象特殊操作符,宏可以规避通常的求值规则. 第10章解释
+如何编写你自己的宏.
+
+</TT>
+<H1><A NAME="SECTION00160000000000000000">
+函数</A>
+</H1><TT>
+你可以用defun来定义新的函数. 它通常接受三个以上变元:一个名字,一列参数,
+和组成函数体的一个或多个表达式. 这是我们定义third的一种可能:
+</TT><PRE>
+&gt; (defun our-third (x)
+    (car (cdr (cdr x))))
+OUR-THIRD
+</PRE><TT>
+第一个变元表示函数名将是our-third. 第二个变元,表(x),说明函数将接受一个
+变元:x. 象这样用作占位符的符号叫做<EM>变量</EM>. 当变量代表传给函数的变元,
+就象x所做的,它又叫做参数.
+
+定义的其余部分,(car (cdr (cdr x))),即通常所说的函数体. 它告诉Lisp,为了
+计算函数的返回值,它该做些什么. 所以,对我们给出的作为变元的任何x,调用
+our-third会返回(car (cdr (cdr x))):
+</TT><PRE>
+&gt; (our-third '(a b c d))
+C
+</PRE><TT>
+
+既然我们看到了变量,就更容易理解什么是符号了. 他们是变量名,是一种有自己
+名称的对象. 这就是为什么符号要象表一样必须被引用. 表必须被引用是因为不
+如此的话,它就会被当作代码;符号必须被引用是因为不如此的话,它就会被当作
+变量. 
+
+你可以把函数定义想象成某个Lisp表达式的一般形式. 下面的表达式测试1和4之
+和是否大于3:
+</TT><PRE>
+&gt; (&gt; (+ 1 4) 3)
+T
+</PRE><TT>
+通过把这些特殊数字换成变量,我们可以写一个函数测试任何两个数之和是否大
+于第三个:
+</TT><PRE>
+&gt; (defun sum-greater (x y z)
+    (&gt; (+ x y) z))
+SUM-GREATER
+&gt; (sum-greater 1 4 3)
+T
+</PRE><TT>
+
+Lisp对程序,过程或函数不加区别. 函数做了所有的事情(事实上构成了语言本身
+的大部分). 你可以认为你的函数中的一个是主函数,但通常你能在顶层里调用任
+何一个函数. 这意味着,当你写程序的时候,你能一小段一小段地测试它们.
+
+</TT>
+<H1><A NAME="SECTION00170000000000000000">
+递归</A>
+</H1><TT>
+我们在上一节中定义的函数还调用了其它函数为自己服务. 比如sum-greater调
+用了+和&gt;. 函数可以调用任何函数,包括它本身.
+
+自己调用自己的函数是递归的. Common Lisp函数member测试某样东西是否是一
+个表的元素. 这是定义成递归函数的简化版本:
+</TT><PRE>
+(defun our-member (obj lst)
+  (if (null lst)
+      nil
+      (if (eql (car lst) obj)
+          lst
+          (our-member obj (cdr lst)))))
+</PRE><TT>
+断言eql测试它的两个变元是否相同;除此之外,定义中所有东西我们以前都见过.
+这是它的运行情况:
+</TT><PRE>
+&gt; (our-member 'b '(a b c))
+(B C)
+&gt; (our-member 'z '(a b c))
+NIL
+</PRE><TT>
+
+our-member的定义符合下面的自然语言描述. 为了测试一个对象obj是否是表lst
+的成员,我们
+</TT>
+
+<OL>
+<LI>首先检查lst是否为空. 如果是空的,显然obj不是它的成员,我们做完了.
+</LI>
+<LI>否则如果obj是lst的第一个元素,它就是成员
+</LI>
+<LI>否则只有当obj是lst其余部分的成员时,它才是lst的成员.
+</LI>
+</OL><TT>
+当你设法理解一个递归函数是如何工作的时候,把它翻译成这样的描述会有帮助
+的.
+
+许多人一开始觉得递归函数很不好理解. 很多困难来自对函数的一个错误的比喻.
+有一种趋势把函数想象成某种形式的机器. 原料就象参数一样到来;一些工作被
+转包给其它函数;最后完成的产品被组装好运出去,就象返回一个值. 如果我们用
+这种比喻,递归就自相矛盾了. 机器怎么能把活儿转包给自己? 它已经忙着干活了.
+
+一个更好的比喻是把函数想象成经历的过程. 在过程中递归是很自然的事情. 我
+们经常在日常生活中看到递归过程. 比如,假设一个历史学家对欧洲历史上的人口变
+化感兴趣. 检查文献的过程可能是这样的:
+</TT>
+
+<OL>
+<LI>取得一份文献
+</LI>
+<LI>查找有关人口变化的信息
+</LI>
+<LI>如果该文献提到其它可能有用的文献,检查它们
+</LI>
+</OL><TT>
+这个例子简单得足以理解,但它是递归的,因为第三步可以伴有一个或多个同样的
+过程.
+
+因此不要把our-member想象为测试某样东西是否在表中的机器,而是把它理解为
+决定某样东西是否在表中的规则. 如果我们以这种见解看待函数,递归的悖论就
+不存在了.<A NAME="tex2html2"
+  HREF="#foot105"><SUP>2</SUP></A></TT>
+<H1><A NAME="SECTION00180000000000000000">
+阅读Lisp</A>
+</H1><TT>
+上一节我们定义的our-member以五个括号结尾. 更加复杂的函数定义可能以七八
+个括号结尾. 初学Lisp的人看到这么多括号会感到气馁. 这叫人如何去读这样的
+代码? 更不用说写了. 我怎么分辨括号之间的匹配?
+
+回答是,你不需要做这些. Lisp程序员通过缩进,而不是括号来读写程序. 当他们
+写代码的时候,他们让文本编辑器显示哪个括号匹配哪个. 任何一个优秀的编辑
+器,特别是Lisp系统附带的,应该能做到括号匹配. 在这样的编辑器中,当你输入
+了一个括号,它会指示和它匹配的那个括号. 如果你的编辑器不做括号匹配,现在
+就停下来,研究一个如何使它做这件事,因为没有这个功能,事实上不可能写Lisp
+程序的.
+
+<FONT SIZE="-1">
+在vi中,你可以用:set sm来打开括号匹配. 在emacs中,M-x lisp-mode是获得该
+功能的好办法.
+
+</FONT>
+有了好的编辑器,当你写程序的时候,括号匹配不再是个问题. 而且因为Lisp缩进
+有通用的惯例,你阅读Lisp代码也不是个问题了. 因为人人都用相同的习惯,你可
+以通过缩进阅读代码,忽略括号.
+
+不管多么有经验的Lisp黑客,会发现our-member的定义很难读懂,如果它写成这个
+样子:
+</TT><PRE>
+(defun our-member (obj lst) (if (null lst) nil (if 
+(eql (car lst) obj) lst (our-member obj (cdr lst)))))
+</PRE><TT>
+如果代码适当地缩进,他就没有困难了. 你可以忽略大部分的括号而读懂它:
+</TT><PRE>
+defun our-member (obj lst)
+  if null lst
+     nil
+     if eql (car lst) obj
+        lst
+        our-member obj (cdr lst)
+</PRE><TT>
+事实上,当你在纸上写Lisp代码的时候,这就是一个可行的办法. 以后你输入的时
+候,可以充分利用编辑器的匹配括号的功能.
+
+</TT>
+<H1><A NAME="SECTION00190000000000000000">
+输入和输出</A>
+</H1><TT>
+到目前为止,我们一直在利用顶层暗中使用i/o. 对实际的交互式的程序,这可能
+还不够. 在这一节中,我们看一些输入输出函数.
+
+Common Lisp中最一般的输出函数是format. 它接受两个以上变元:第一个表示输
+出到哪儿,第二个是字符串模板,剩下的变元通常是对象,它们的打印表示
+(printed representation)将被插入到模板中去. 这是个典型的例子:
+</TT><PRE>
+&gt; (format t "~A plus ~A equals ~A.~%" 2 3 (+ 2 3))
+2 plus 3 equals 5.
+NIL
+</PRE><TT>
+注意两样东西打印在这儿. 第一行是format打印的. 第二行是format调用的返回
+值,就象通常一样由顶层打印. 通常象format这样的函数不会直接在顶层,而
+是在程序内部被调用,因此返回值就不会被看见.
+format的第一个变元t表示输出将被送到缺省的地方去. 通常这会是顶层. 第二
+个变元是充当输出模板的字符串. 在它里面,每个&nbsp; A*表示一个将被填充的位置,
+而&nbsp;%表示新行符. 这些位置依次被后面的变元的值填充.
+
+标准的输入函数是read. 当没有变元时,它从缺省的地方--通常是顶层--读入.
+下面这个函数提示用户输入,然后返回任何输入的东西:
+</TT><PRE>
+(defun askem (string)
+  (format t "~A" string)
+  (read))
+</PRE><TT>
+它运行如下:
+</TT><PRE>
+&gt; (askem "How old are you? ")
+How old are you? 29
+29
+</PRE><TT>
+
+请记住read会永远等在那儿直到你输入什么东西并(通常要)敲入回车. 因此调用
+read而不打印明确的提示信息是不明智的,否则你的程序会给人以已经死掉的印
+象,但实际上它在等待输入.
+
+第二个要了解read的是它非常强大:它是一个完整的Lisp语法分析器. 它并不是
+读入字符再把它们当作字符串返回. 它分析所读到的东西,并返回所产生的Lisp
+对象. 在上例中, 它返回一个数.
+
+askem虽然很短,但它展示了一些我们以前在函数定义中没有看到的内容. 它的函
+数体包含多个表达式. 函数体可以包含任意多个表达式,当函数被调用时,它们依
+次被求值,函数会返回最后一个表达式的值.
+
+在以前的章节中,我们坚持所谓的``纯粹''的Lisp--即没有副作用的Lisp. 副作
+用是指作为表达式求值的后果改变了外部世界的状态. 当我们对一个纯粹的Lisp
+表达式,例如(+ 1 2)求值,没有出现副作用;它仅返回一个值. 但当我们调用
+format,它不仅返回值,还打印了一些东西. 这是一种副作用.
+
+如果我们要写没有副作用的代码,那么定义有多个表达式的函数体就没有什么意
+义. 最后一个表达式的值作为函数的返回值被返回了,但前面的表达式的值都被
+扔掉了. 如果这些表达式没有副作用,你就不知道为什么Lisp要费劲去计算它们.
+
+</TT>
+<H1><A NAME="SECTION001100000000000000000">
+变量</A>
+</H1><TT>
+let是Common Lisp里最常用的操作符之一,它让你引入新的局部变量:
+</TT><PRE>
+&gt; (let ((x 1) (y 2))
+    (+ x y))
+3
+</PRE><TT>
+
+一个let表达式有两部分. 第一部分是一列创造新变量的指令,每个形如<EM>(变量 表
+达式)</EM>. 每个变量会被赋予相应的表达式的值. 在上例中,我们创造了两个变量x
+和y,它们分别被赋予初值1和2. 这些变量只在let的体内有效.
+
+变量和值的列表的后面是一组表达式,它们将被依次求值. 在此例中,只有一个表
+达式:对+的调用. 最后一个表达式的值作为let的值被返回. 下面是一个使用let
+的更具选择性的askem的版本:
+</TT><PRE>
+(defun ask-number ()
+  (format t "Please enter a number. ")
+  (let ((val (read)))
+    (if (numberp val)
+        val
+        (ask-number))))
+</PRE><TT>
+此函数造了变量val来存放read返回的对象. 因为它有此对象的名称,它可以
+在作出是否要返回对象之前察看一下你的输入值. 你可能已经猜到,numberp是测
+试它的自变量是否是数字的断言.
+
+如果用户输入的不是数字,ask-number调用它自己. 结果产生了一个坚持要得到
+一个数的函数:
+</TT><PRE>
+&gt; (ask-number)
+Please enter a number. a
+Please enter a number. (ho hum)
+Please enter a number. 52
+52
+</PRE><TT>
+
+象目前我们看到的变量都叫做局部变量. 它们只在特定的环境中是有效的. 另外
+有一类叫做全局变量的变量,它们在任何地方都是可见的.<A NAME="tex2html3"
+  HREF="#foot126"><SUP>3</SUP></A>
+
+通过传给defparameter一个符号和一个值,你可以构造全局变量:
+</TT><PRE>
+&gt; (defparameter *glob* 99)
+*GLOB*
+</PRE><TT>
+这样的变量可以在任何地方存取,除非在一个表达式中,定义了一个相同名字的局
+部变量. 为了避免这种情况的出现,习惯上全局变量的名字以星号开始和结束.
+我们刚才定义的变量可读作``星-glob-星''.
+
+你还可以用defconstant定义全局常数:
+</TT><PRE>
+(defconstant limit (+ *glob* 1))
+</PRE><TT>
+你不需要给常数起一个与众不同的名字,因为如果使用相同的名字作为变量,就会
+出错. 如果你想知道某个符号是否是全局变量或常数的名字,请用boundp:
+</TT><PRE>
+&gt; (boundp '*glob*)
+T
+</PRE>
+<H1><A NAME="SECTION001110000000000000000">
+赋值</A>
+</H1><TT>
+Common Lisp中最普通的赋值操作符是setf. 我们可以用它对全局或局部变量进
+行赋值:
+</TT><PRE>
+&gt; (setf *glob* 98)
+98
+&gt; (let ((n 10))
+    (setf n 2)
+    n)
+2
+</PRE><TT>
+
+如果第一个自变量不是局部变量的名字,它被认为是全局变量:
+</TT><PRE>
+&gt; (setf x (list 'a 'b 'c))
+(A B C)
+</PRE><TT>
+即你可以通过赋值隐含地新建全局变量.不过在源文件中明确地使用
+defparameter
+<BR>是较好的风格.
+
+你能做的远不止给变量赋值. setf的第一个自变量不但可以是变量名,还可以是
+表达式. 在这种情况下,第二个自变量的值被插入到第一个所涉及到的位置:
+</TT><PRE>
+&gt; (setf (car x) 'n) 
+N
+&gt; x
+(N B C)
+</PRE><TT>
+
+setf的第一个自变量几乎可以是任何涉及特定位置的表达式. 所有这样的操作符在
+附录D中都被标记为``settable''.
+
+你可以给setf偶数个自变量. 形如
+</TT><PRE>
+(setf a b 
+      c d 
+      e f)
+</PRE><TT>
+的表达式相当于连续三个单独的setf调用:
+</TT><PRE>
+(setf a b)
+(setf c d)
+(setf e f)
+</PRE>
+<H1><A NAME="SECTION001120000000000000000">
+函数化编程法</A>
+</H1><TT>
+函数化编程法的意思是编写通过返回值来工作的程序,而不是修改什么东西. 它是
+Lisp中占支配地位的范例. 大多数Lisp内置函数被调用是为了得到它们的返回值,
+而不是它们的副作用.
+
+例如函数remove,它接受一个对象和一个表,返回一个排除了那个对象的新表:
+</TT><PRE>
+&gt; (setf lst '(c a r a t))
+(C A R A T)
+&gt; (remove 'a lst)
+(C R T)
+</PRE><TT>
+为什么不说remove从表中删除一个对象? 因为这不是它所做的事情. 原来的表没
+有被改变:
+</TT><PRE>
+&gt; lst
+(C A R A T)
+</PRE><TT>
+
+那么如果你真想从表中删掉一些元素怎么办? 在Lisp中,你通常这样做类似的事
+情:把表传给某个函数,然后用setf来处理返回值. 为了把所有的a从表x中删掉,
+我们这样做:
+</TT><PRE>
+(setf x (remove 'a x))
+</PRE><TT>
+
+函数化编程法本质上意味着避免使用诸如setf的函数. 乍一看连想象这种可能性都
+很因难,别说试着去做了. 怎么能仅凭返回值就能构造程序?
+
+完全不利用副作用是有困难的. 但随着学习的深入,你会惊讶地发现真正需要副
+作用的地方极少. 你使用副作用越少,你也就越进步.
+
+函数化编程最重要的优点之一是它允许交互式测试. 在纯粹的函数化代码中,当
+你写函数的时候就可以测试它们. 如果它返回期望的值,你可以肯定它是正确的.
+这些额外的信心,聚集在一起会产生巨大的影响. 当你在程序中修改了任何地方,
+你会得到即时的转变. 而这种即时的转变会带来一种全新的编程风格. 就象电话
+与信件相比,赋予我们新的通讯方式. 
+
+</TT>
+<H1><A NAME="SECTION001130000000000000000">
+迭代</A>
+</H1><TT>
+当我们想做一些重复的事情时,用迭代比用递归更自然些. 典型的例子是用迭代
+生成某种表格. 函数
+</TT><PRE>
+(defun show-squares (start end)
+  (do ((i start (+ i 1)))
+      ((&gt; i end) 'done)
+    (format t "~A ~A~%" i (* i i))))
+</PRE><TT>
+打印从start到end之间的整数的平方:
+</TT><PRE>
+&gt; (show-squares 2 5)
+2 4
+3 9 
+4 16
+5 25
+DONE
+</PRE><TT>
+
+do宏是Common Lisp中最基本的迭代操作符. 就象let,do也会产生变量,它的第一
+个自变量是关于变量规格的表. 表中的每个元素具有如下形式:
+</TT><PRE>
+        (variable initial update)
+</PRE><TT>
+其中variable是符号,而initial和update是表达式. 一开始每个变量会被赋予相
+应的initial的值;在迭代的时候它会被赋予相应的update的值. show-squares中
+的do仅产生了一个变量i. 第一次迭代的时候,i被赋予start的值,在以后的迭代
+中它的值会每次增加1.
+
+do的第二个自变量是包含一个或多个表达式的表. 第一个表达式用来测试迭代是
+否应该停止. 在上例中,测试是(&gt; i end). 其余的表达式会在迭代停止后依次计
+算,并且最后一个的值作为do的返回值. 因此show-squares总是会返回done.
+
+余下的自变量组成了循环体. 它们在每次迭代的时候依次被求值. 在每次迭代的
+时候变量先被更新,然后终止测试被计算,再是(如果测试失败)循环体被计算.
+
+作为对比,这是递归版本的show-squares:
+</TT><PRE>
+(defun show-squares (i end)
+  (if (&gt; i end)
+      'done
+      (progn
+        (format t "~A ~A~%" i (* i i))
+        (show-squares (+ i 1) end))))
+</PRE><TT>
+此函数中的唯一新面孔是progn. 它接受任意数量的表达式,对它们依次求值,然
+后返回最后一个的值. 
+
+对一些特殊情况Common Lisp有更简单的迭代操作符. 比如,为了遍历表的所有元
+素,你更可能用dolist. 这个函数返回表的长度:
+</TT><PRE>
+(defun our-length (lst)
+  (let ((len 0))
+    (dolist (obj lst)
+      (setf len (+ len 1)))
+    len))
+</PRE><TT>
+此处dolist接受形如(variable expression)的自变量,然后是表达式块.
+variable相继与expression返回的表中元素绑定,表达式块被计算. 因此上面的
+循环在意思是,对lst中的每个obj,len增加1.
+
+此函数的一个显然的递归版本是:
+</TT><PRE>
+(defun our-length (lst)
+  (if (null lst)
+      0
+      (+ (our-length (cdr lst)) 1)))
+</PRE><TT>
+即,如果表为空,它的长度就是0;否则它的长度是它的cdr的长度加上1. 此版本清
+楚一些,但因为它不是尾递归的(见13.2节),它的效率不那么高. 
+
+</TT>
+<H1><A NAME="SECTION001140000000000000000">
+函数作为对象</A>
+</H1><TT>
+函数在Lisp中就象符号,字符串和表一样,是常规的对象. 如果我们给function一
+个函数的名字,它会返回相关的对象. 就象quote,function是特殊操作符,因此我
+们不必引用自变量:
+</TT><PRE>
+&gt; (function +)
+#&lt;Compiled-Function + 17BA4E&gt;
+</PRE><TT>
+这个模样很奇怪的返回值是函数在典型Common Lisp实现中可能的显示方式. 
+
+到目前为止我们涉及到的对象具有这样的特点:Lisp显示它们与我们输入的模样
+是一致的. 此惯例不适合函数. 一个象+这样的内置函数在内部可能是一段机器
+码. Common Lisp的实现可以选择任何它喜欢的外部表示方式.
+
+就象我们用'作为quote的简记法,我们可以用#'作为function的简写:
+</TT><PRE>
+&gt; #'+
+#&lt;Compiled-Function + 17BA4E&gt;
+</PRE><TT>
+此简记法叫做sharp-quote.
+
+就象其它的对象,函数可以作为自变量传递. 一个接受函数作为自变量的是
+apply. 它接受一个函数和一列自变量,并返回那个函数应用这些自变量后的结
+果:
+</TT><PRE>
+&gt; (apply #'+ '(1 2 3))
+6
+&gt; (+ 1 2 3)
+6
+</PRE><TT>
+它能接受任意数目的自变量,只要最后一个是表:
+</TT><PRE>
+&gt; (apply #'+ 1 2 '(3 4 5))
+15
+</PRE><TT>
+函数funcall能做同样的事情,不过它不需要把自变量放在表中:
+</TT><PRE>
+&gt; (funcall #'+ 1 2 3)
+6
+</PRE><TT>
+
+宏defun创造一个函数并给它一个名字. 但函数并不是必须需要名字,因此我们也
+不需要用defun来定义它们. 就象其它Lisp对象一样,我们可以直接引用函数.
+
+为了直接引用一个整数,我们用一列数字;为了直接引用函数,我们用所谓的
+lambda表达式. 一个lambda表达式是包含以下元素的表:符号lambda,一列参数,
+然后是零个或多个表达式组成的函数体.
+
+这个lambda表达式代表接受两个数并返回它们之和的函数:
+</TT><PRE>
+(lambda (x y) 
+  (+ x y))
+</PRE><TT>
+(x y)是参数表,跟在它后面的是函数体.
+
+可以认为lambda表达式是函数的名称. 就象普通的函数名,lambda表达式可以是
+函数调用的第一个元素:
+</TT><PRE>
+&gt; ((lambda (x) (+ x 100)) 1)
+101
+</PRE><TT>
+而通过在lamda表达式之前附加#',我们得到了相应的函数:
+</TT><PRE>
+&gt; (funcall #'(lambda (x) (+ x 100))
+           1)
+101
+</PRE><TT>
+此种表达法让我们使用匿名函数.
+
+</TT>
+<P></P>
+<TT>
+<FONT SIZE="-1">
+lambda是什么?
+
+lambda表达式中的lambda不是操作符. 它仅是个符号.<A NAME="tex2html4"
+  HREF="#foot181"><SUP>4</SUP></A> 它在早期的Lisp方言里有一种作用:函
+ 数的内部形态是表,因此区别函数和普通表的唯一办法是查看第一个元素是否是
+ 符号lambda.
+
+在Common Lisp中你能把函数表示为表,但它们在内部被表示成独特的函数对象.
+因此lambda不再是必需的. 如果要求把函数
+</FONT></TT><PRE>
+(lambda (x) (+ x 100))
+</PRE><TT><FONT SIZE="-1">
+表示成
+</FONT></TT><PRE>
+((x) (+ x 100))
+</PRE><TT><FONT SIZE="-1">
+也没有什么矛盾,但Lisp程序员已经习惯了函数以符号lambda开始,因此Common
+Lisp保留了此传统.
+
+</FONT></TT>
+<H1><A NAME="SECTION001150000000000000000">
+类型</A>
+</H1><TT>
+Lisp用非同寻常的灵活手段来处理类型. 在许多语言中,变量是有类型的,你得指
+定变量的类型才能使用它. 在Common Lisp中,值具有类型,而不是变量. 你可以
+假想每个对象都贴了指明它的类型的标签. 这种方法叫做显示类型. 你不需要去
+声明变量的类型,因为变量可以装任何类型的对象. 
+
+虽然类型声明不是必需的,为了效率的缘故你可能会用到它们. 类型声明在13.3
+节中讨论.
+
+Common Lisp的内置类型构成了一个类型的层次结构. 一个对象通常具有多种类
+型. 比如,数27是类型fixnum,integer,rational,real,number,atom,和t,以一般
+性的增长为序. (Numeric类型在第9章中讨论)类型t是所有类型的超集,因此任何
+对象都是类型t.
+
+函数typep接受一个对象和一个类型说明符,如果对象是那种类型就返回真:
+</TT><PRE>
+&gt; (typep 27 'integer)
+T
+</PRE><TT>
+当我们碰到各种内置类型时,我们会介绍它们. 
+
+</TT>
+<H1><A NAME="SECTION001160000000000000000">
+展望</A>
+</H1><TT>
+本章仅蜻蜓点水般地介绍了一下Lisp. 然而一种非同寻常的语言的形象已经浮现
+出来了. 首先,该语言有单一的语法来表达所有的程序结构. 此语法基于一种Lisp
+的对象--表. 函数,作为独特的Lisp对象,可以表示为表. 而且Lisp本身就是
+Lisp程序,几乎全是由与你自己定义的函数没有任何区别的函数组成的.
+
+如果你还不完全清楚所有这些概念之间的关系,请不必担心. Lisp引入了这么多
+新颖的概念,你得花时间去熟悉它们. 不过至少得说明一件事: 令人吃惊的优雅
+思想蕴藏其中.
+
+Richard Gabriel曾半开玩笑地说C是适合写Unix的语言.<A NAME="tex2html5"
+  HREF="#foot190"><SUP>5</SUP></A> 我们也可以说Lisp是编写Lisp的语言. 但这是两种不同的陈述.
+一种可以用自己来编写的语言是和一种擅长编写某些特定类型的应用的语言完全
+不同的. 它开启了新的编程方法:你不但在语言中编程,你还可以改进语言以适合
+你程序的需要. 如果你想理解Lisp编程的本质,这个思想是个很好的起点. 
+
+</TT>
+<P></P>
+<TT>
+总结
+</TT>
+
+<OL>
+<LI>Lisp是交互式语言. 如果你在顶层输入表达式,Lisp会打印它的值.
+</LI>
+<LI>Lisp程序由表达式组成. 表达式可以是一个原子,或是一个表, 表的第一
+个元素是操作符,后面跟着零个或多个自变量. 前缀表达式意味着操作符可接受
+任意多个自变量.
+</LI>
+<LI>Common Lisp函数调用的求值规则:从左至右对自变量求值,然后把这些值
+传给由操作符表示的函数. quote有它自己的求值规则:它原封不动地返回自变量.
+</LI>
+<LI>除了通常的数据类型,Lisp还有符号和表. 由于Lisp程序由表组成,很容易
+编写能写程序的程序.
+</LI>
+<LI>三个基本的表处理函数是cons:它创造一个表;car:它返回表的头一个元素;
+cdr:它返回第一个元素之后的所有东西.
+</LI>
+<LI>在Common Lisp里, t表示真,nil表示伪. 在逻辑上下文中,除了nil之外的
+任何东西都算作真. 基本的条件语句是if. and和or操作符就象条件语句.
+</LI>
+<LI>Lisp主要是由函数构成的. 你可用defun来定义新的函数.
+</LI>
+<LI>调用自己的函数是递归的. 递归函数应该被认为是一个过程而不是机器.
+</LI>
+<LI>括号不是个问题,因为程序员利用缩进来读写Lisp.
+</LI>
+<LI>基本的i/o函数是read:它包含了完整的Lisp语法分析器,和format:它基于
+模板产生输出.
+</LI>
+<LI>你可以用let创造新的局部变量,用defparameter创造新的全局变量.
+</LI>
+<LI>赋值操作符是setf. 它的第一个自变量可以是表达式.
+</LI>
+<LI>函数化编程法--它意味着避免副作用--是Lisp中占支配地位的范例.
+</LI>
+<LI>基本的循环操作符是do.
+</LI>
+<LI>函数是常规的Lisp对象. 它们可以作为自变量被传递,可以表示成lambda
+表达式.
+</LI>
+<LI>值有类型,而变量没有类型
+</LI>
+</OL>
+<P></P>
+<TT>
+练习
+</TT>
+
+<OL>
+<LI>解释以下表达式求值后的结果:
+
+<UL>
+<LI>a. (+ (- 5 1) (+ 3 7))
+</LI>
+<LI>b. (list 1 (+ 2 3))
+        
+</LI>
+</UL>
+</LI>
+<LI>给出3种不同的能返回(a b c)的cons表达式
+</LI>
+<LI>用car和cdr定义一个函数,它返回表的第四个元素.
+</LI>
+<LI>定义一个函数,它接受两个自变量,返回两个中较大的一个.
+</LI>
+<LI>这些函数做了什么?
+<PRE>
+    a. (defun enigma (x)
+         (and (not (null x))
+              (or (null (car x))
+                  (enigma (cdr x)))))
+
+    b. (defun mystery (x y)
+         (if (null y)
+             nil
+             (if (eql (car y) x)
+                 0
+                 (let ((z (mystery x (cdr y))))
+                   (and z (+ z 1))))))
+</PRE>
+</LI>
+<LI>在下面的表达式中,x处应该是什么可得出结果?
+<PRE>
+    a. &gt; (car (x (cdr '(a (b c) d))))
+       B
+
+    b. &gt; (x 13 (/ 1 0))
+       13
+
+    c. &gt; (x #'list 1 nil)
+       (1)
+</PRE>
+</LI>
+<LI>只用本章介绍的操作符,定义一个函数,它接受一个表作为自变量,并返回t
+如果表的元素中至少有一个类型是表.
+</LI>
+<LI>给出函数的迭代和递归版本:它
+<PRE>
+    a. 接受一个正整数,并打印这么多数目的点.
+
+    b. 接受一个表,返回符号a在表中出现的次数.
+</PRE>
+</LI>
+<LI>一位朋友想写一个函数,它返回表中所有非nil元素之和. 他写了此函数的
+两个版本, 但没有一个能正确工作. 请指出错误在哪里,并给出正确的版本:
+<PRE>
+    a. (defun summit (lst)
+         (remove nil lst)
+         (apply #'+ lst))
+    
+    b. (defun summit (lst)
+         (let ((x (car lst)))
+           (if (null x)
+               (summit (cdr lst))
+               (+ x (summit (cdr lst))))))
+</PRE>
+</LI>
+</OL>
+<H1><A NAME="SECTION00200000000000000000">
+About this document ...</A>
+</H1><P>
+This document was generated using the
+<A HREF="http://www-texdev.mpce.mq.edu.au/l2h/docs/manual/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2K.1beta (1.48)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<BR>
+Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>-split=0 acl2.tex</TT>
+<P>
+The translation was initiated by Dai Yuwen on 2003-07-29
+<BR><HR><H4>Footnotes</H4>
+<DL>
+<DT><A NAME="foot62">...
+基本的提取表中元素的函数是car和cdr.</A><A NAME="foot62"
+ HREF="acl2.html#tex2html1"><SUP>1</SUP></A>
+<DD>car和cdr的名字来源于表在
+第一个Lisp实现中的内部表示. car表示``contents
+of the address part of the registe''而cdr表示``contents
+of the decrement part of the register.''
+
+<DT><A NAME="foot105">...
+不存在了.</A><A NAME="foot105"
+ HREF="acl2.html#tex2html2"><SUP>2</SUP></A>
+<DD>理解递归有困难的读者可以参考以下文献中的任何一种:
+
+Touretzky, David S. Common Lisp: A Gentle Introduction to Symbolic
+Computation. Benjamin/Cummings, Redwood City (CA), 1990, Chapter 8.
+
+Friedman, Daniel P., and Matthias Felleisen. The Little Lisper.
+MIT Press, Cambridge, 1987.
+
+
+<DT><A NAME="foot126">...
+有一类叫做全局变量的变量,它们在任何地方都是可见的.</A><A NAME="foot126"
+ HREF="acl2.html#tex2html3"><SUP>3</SUP></A>
+<DD>真正的区别
+在于词法变量和特殊变量的不同,不过我们得到第六章才会考虑它.
+
+<DT><A NAME="foot181">... 它仅是个符号.</A><A NAME="foot181"
+ HREF="acl2.html#tex2html4"><SUP>4</SUP></A>
+<DD>在Ansi Common
+ Lisp中还有一个lambda宏,它能让你把#'(lambda (x) x)写成(lambda (x)
+ x). 由于使用这个宏模糊了lambda表达式和符号化的函数名(其中你得作用#')
+ 的对称性,它最多不过具有美观的外表.
+
+<DT><A NAME="foot190">... Gabriel曾半开玩笑地说C是适合写Unix的语言.</A><A NAME="foot190"
+ HREF="acl2.html#tex2html5"><SUP>5</SUP></A>
+<DD>Gabriel,
+Richard P.  Lisp: Good News, Bad News, How to Win Big. AI Expert, June
+1991, p. 34.
+
+</DL><HR>
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive" SRC="nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png">   
+<BR>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Dai Yuwen
+2003-07-29
+</ADDRESS>
+</BODY>
+</HTML>
