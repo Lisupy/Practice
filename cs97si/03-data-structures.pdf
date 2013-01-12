@@ -1,0 +1,45 @@
+# Data Structure 数据结构 #
+## Stack/Queue 栈/队列 ##
+ * Stack
+ 	* Push(x)
+ 	* Pop()
+ 	* Top()
+ * Queue
+	* Enqueue(x)
+	* Dequeue()
+	* Frone()
+## Heap and Priority Queue 堆/优先队列 ##
+ * Insert(x,p)
+ * RemoveTop()
+ * Top()
+  
+## Union-Find Structure  并查集 ##
+int Find(int x){
+	while(x != L[x]) x=L[x];
+	return x;
+}
+void Union(int x, int y){
+	L[Find(x)] = Find(y);
+}
+int Find(int x) {
+  if(x == L[x]) return x;
+int root = Find(L[x]);
+  L[x] = root;
+return root;
+}
+int Find(int x) {
+  return x == L[x] ? x : L[x] = Find(L[x]);
+}
+
+
+## Binary Search Tree(BST)  二分搜索树 ##
+ * Insert(x)
+ * Delete(x)
+ * Find(x)
+ * Count(x)
+ * GetNext(x)
+
+## Binary Indexed Tree(BIT) 二分索引树 ##
+ 
+## Lowest Common Ancestor(LCA) 最小公共祖先 ##
+ * 倍增分层算法；类似DP，很牛b的样子；
