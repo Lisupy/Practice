@@ -6,8 +6,11 @@
     (set! acc (+ acc add))
     acc))
 (define A (make-accumulator 5))
+(define B (make-accumulator 5))
 (A 10)
 (A 10)
+(B 10)
+(B 20)
 
 
 "====Ex3.2"
@@ -20,11 +23,16 @@
   dispatch)
 
 (define s (make-monitored sqrt))
+(define s2 (make-monitored sqrt))
 (s 100)
 (s 'how-many-calls?)
 (s 100)
 (s 'how-many-calls?)
 
+(s2 100)
+(s2 'how-many-calls?)
+(s2 100)
+(s2 'how-many-calls?)
 "====Ex3.3"
 (define (make-account balance password)
   (define (withdraw amount)
