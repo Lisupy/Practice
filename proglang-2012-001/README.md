@@ -1,1 +1,0 @@
-[https://class.coursera.org/proglang-2012-001/class/index](https://class.coursera.org/proglang-2012-001/class/index)
