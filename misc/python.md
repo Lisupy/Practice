@@ -1,8 +1,18 @@
 ## 词汇 ##
 	Python Enhancement Proposals， PEPs
-
+	List Comprehensions
 ## zen of python ##
 	import this
+
+## File and IO ##
+```python
+with open("file", "mode") as variable:
+    # Read or write to the file
+
+
+if my_file.closed == False:
+	my_file.close()
+```
 	
 ## build-in ##
 ```python
@@ -29,6 +39,24 @@ print dir(), dir(__doc__), dir(__builtins__)
 ```python
 	from datetime import datetime
 	datetime.now()
+```
+
+## 二进制表示 ##
+
+```python
+print 0b1,    #1
+print 0b10,   #2
+print 0b11,   #3
+print 0b100,  #4
+print 0b101,  #5
+print 0b110,  #6
+print 0b111   #7
+print 0b1 + 0b11
+print 0b11*0b11
+print oct(100) #'0144'
+print bin(100) #'0b1100100'
+print hex(100) #'0x64'
+print int(0b11001001) # 201
 ```
 
 ## 变长参数 ##
@@ -64,11 +92,27 @@ for index, item in enumerate(animals):
     print index, item
 ```
 
+* List Slice [start:end:stride]
+
+```python
+>>> range(1,11)[::-1]
+[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+```
+
 ## Dict ##
 ```Python
 del dict_name[key_name]
 
+>>> {'A':1, 'B':2, 'C':3}.items()
+[('A', 1), ('C', 3), ('B', 2)]
 
+>>> {'A':1, 'A':2, 'C':3}
+{'A': 2, 'C': 3}
+>>> {'A':1, 'A':2, 'C':3}.keys()
+['A', 'C']
+
+>>> {'A':1, 'A':1, 'C':1}.values()
+[1, 1]
 ```
 
 ## while/break, for/break ##
@@ -81,6 +125,36 @@ for i in range(10):
 else:
 	print i
 ```
+
+## OO, Class ##
+
+* super 和调用父类的同名方法
+
+* __repr__
+```python
+class Point3D(object):
+	def __init__(self, x, y, z):
+		self.x,self.y,self.z = x,y,z
+	def __repr__(self):
+		return str((self.x,self.y,self.z))
+```
+
+	When dealing with classes, you can have variables that are available everywhere (global variables), variables that are only available to members of a certain class (member variables), and variables that are only available to particular instances of a class (instance variables).
+
+
+```python
+class Animal(object):
+	def __init__(self):
+		pass
+
+class NewClass(object):
+    # Class magic here
+
+class DerivedClass(Base):
+   def some_method(self):
+       super(DerivedClass, self).meth()
+```
+
 
 ## bugs? ##
 	-4**2 = -16
