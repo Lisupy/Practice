@@ -17,7 +17,7 @@ int main(){
     int float_len = strlen(floatp);
     unsigned long long ull = 0;
     unsigned long long base = 1;
-    for (int i = 0; i < 8; i++){
+    for (int i = 0; i < 15; i++){
       base *= 8;
       ull *= 8;
       if (i < float_len){
