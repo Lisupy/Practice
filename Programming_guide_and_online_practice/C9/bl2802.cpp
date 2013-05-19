@@ -1,6 +1,7 @@
 #include<cstdio>
 #include<iostream>
 #include<queue>
+#include<cstring>
 #include<vector>
 #include<algorithm>
 #include<cstdlib>
@@ -21,12 +22,7 @@ char Map[MAXN][MAXN];
 int BFS(){
   int visited[MAXN][MAXN];
   queue< pair<int, int> > Q;
-// fill_n(visited[0], MAXN*MAXN, INF);
-  for (int i = 0; i < MAXN; i++){
-    for (int j = 0; j < MAXN; j++){
-      visited[i][j] = INF;
-    }
-  }
+  fill(&visited[0][0], &visited[MAXN-1][MAXN-1]+1, INF);
   visited[x1][Y1] = 0;
   Q.push(make_pair(x1, Y1));
   while (!Q.empty()){
@@ -61,8 +57,8 @@ int main(){
   int BoardCnt = 0;
 
   while (scanf("%d %d", &w, &h) && w){
-
-    scanf("\n");
+    fill(&Map[0][0], &Map[MAXN-1][MAXN-1]+1, 0);
+    scanf("%*c");
     for (int i = 1; i <= h; i++){
       fgets(Map[i]+1, MAXN, stdin);
     }
@@ -78,11 +74,7 @@ int main(){
       if (bfs == INF){
         printf("Pair %d: impossible.\n", PairCnt);
       }else{
-    //    if (bfs == 1){
-     //     printf("Pair %d: %d segment.\n", PairCnt, bfs);
-      //  }else{
           printf("Pair %d: %d segments.\n", PairCnt, bfs);
-       // }
       }
     }
     printf("\n");
