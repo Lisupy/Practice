@@ -18,6 +18,7 @@
 #include<cstdio>
 #include<cstring>
 #include<numeric>
+#include<sstream>
 using namespace std;
 
 
@@ -37,32 +38,24 @@ struct Voting{
     int n;
     cin >> n;
     candiates.resize(n + 1);
-    //cout << n << endl;
+
     cin.ignore();
     for (int i = 1; i <= n; i++){
       getline(cin, candiates[i]);
- //     cout << "[" << candiates[i] << "]" << endl;
     }
     
     is_valid = vector<bool>(n + 1, true);
 
-    string tmp;
-    while (getline(cin, tmp)){
-   //   cout << "[" << tmp << "]" << endl;
-      if (tmp[0] == '\0'){
-        return 0;
-      }
-      int len = 0;
-      const char* buf = tmp.c_str();
-      vector<int> ballot;
+    string line;
+    while (getline(cin, line) && line.length() > 0){
+      istringstream iss(line);
+      vector<int> ballot(n);
       for (int i = 0; i < n; i++){
-        int t;
-        len += sscanf(buf + len, "%d", &t);
-        ballot.push_back(t);
+        iss >> ballot[i];
       }
       ballots.push_back(ballot);
     }
-    return EOF;
+    return 0;
   }
 
   int process(){
@@ -91,8 +84,6 @@ struct Voting{
         }
       }
 
-      //   printf("total: %d\n", total);
-      //  printf("{%d, %d}\n", max_count, min_count);
       if (max_count * 2 > total || min_count == max_count){
         for (size_t i = 0; i < counts.size(); i++){
           if (counts[i] == max_count){
@@ -117,7 +108,6 @@ Voting voting;
 int main(){
   int T;
   cin >> T;
-
   while (T--){
     voting.reset();
     voting.input();
