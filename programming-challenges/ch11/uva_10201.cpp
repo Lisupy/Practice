@@ -7,7 +7,7 @@ using namespace std;
 
 const int MAXN = 128;
 const int MAXL = 256; 
-const long long INF = 2000000000;
+const long long INF = 1<<28;
 int L;
 int N;
 long long dp[2][MAXL];
@@ -17,8 +17,6 @@ int main(){
   int T;
   cin >> T;
   cin.ignore();
-  string line1; 
-  getline(cin, line1);  
   while (T--){
     cin >> DDD; 
     N = 1;
@@ -38,6 +36,8 @@ int main(){
     }
     
     N--;
+   // dist[N] = DDD;
+  //  cost[N] = 2000;
     assert(dist[0] >= 0);
     assert(dist[N] <= DDD);
     fill(&dp[0][0], &dp[1][MAXL - 1] + 1, INF);
@@ -61,13 +61,13 @@ int main(){
     }
     if (DDD - dist[N] > 100){
       cout << "Impossible" << endl;
-      continue;
-    }
-    long long ans = dp[N % 2][100 + DDD - dist[N]];
-    if (ans >= INF){
-      cout << "Impossible" << endl;
-    }else{
-      cout << ans << endl;
+    }else {
+      long long ans = dp[N % 2][100 + DDD - dist[N]];
+      if (ans >= INF){
+        cout << "Impossible" << endl;
+      }else{
+        cout << ans << endl;
+      }
     }
     if (T){
       cout << endl;
