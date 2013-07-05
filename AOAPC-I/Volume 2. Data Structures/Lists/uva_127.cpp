@@ -1,58 +1,65 @@
 #include<iostream>
 #include<cstdio>
+#include<vector>
 #include<algorithm>
+#include<queue>
+#include<deque>
 #include<string>
 #include<list>
+#include<stack>
 using namespace std;
 
 
-bool match(string left, string right){
+static inline bool match(const string &left, const string &right){
   return left[0] == right[0] || left[1] == right[1];
 }
 
-vector<string> cards;
-vector<int> nums;
+list<stack<string> > piles;
+typedef list<stack<string> >::iterator IT;
 int input(){
-  cards.clear();
-  nums.clear();
+  piles.clear();
   string s;
   for (int i = 0; i < 52; i++){
     cin >> s;
-    if (s == "#"){
+    if (s[0] == '#'){
       return 0;
     }
-    cards.push_back(s);
-    nums.push_back(1);
+    stack<string> ss;
+    ss.push(s);
+    piles.push_back(ss);
   }
   return 1;
 }
 
-void combine(int left, int right){
-  cards[left] = cards[right];
-  nums[left] += nums[right];
-  cards.erase(cards.begin() + right);
-  nums.erase(nums.begin() + right);
+bool check_and_move(IT it, int step){
+  IT it2 = it;
+  while (step--){
+    if (it2 != piles.begin()){
+      it2--;
+    }else{
+      return false;
+    }
+  }
+  if (match(it->top(), it2->top())){
+    it2->push(it->top());
+    it->pop();
+    if (it->empty()){
+      piles.erase(it);
+    }
+    return true;
+  }else{
+    return false;
+  }
 }
 
-void debug(){
-  for (size_t i = 0; i < cards.size(); i++){
-    cout << cards[i] << "(" << nums[i] << ") " ;
-  }
-  cout << endl;
-}
 
 void process(){
   while (true){
     bool found = false;
-    for (size_t i = 0; i < cards.size() && !found; i++){
-      size_t js[2] = {i - 3, i - 1};
-      for (int k = 0; k < 2 && !found; k++){
-        size_t j = js[k];
-        if (j < cards.size() && match(cards[i], cards[j])){
-          combine(j, i);
-          found = true;
-          break;
-        }
+    for (IT it = piles.begin(); it != piles.end(); it++){
+      if (check_and_move(it, 3) || check_and_move(it, 1)){
+        found = true;
+        break;
       }
     }
     if (!found){
@@ -62,13 +69,13 @@ void process(){
 }
 
 void output(){
-  if (cards.size() > 1){
-    printf("%lu piles remaining:", nums.size());
+  if (piles.size() > 1){
+    printf("%lu piles remaining:", piles.size());
   }else{
-    printf("%lu pile remaining:", nums.size());
+    printf("%lu pile remaining:", piles.size());
   }
-  for (size_t i = 0; i < nums.size(); i++){
-    printf(" %d", nums[i]);
+  for (IT it = piles.begin(); it != piles.end(); it++){
+    printf(" %lu", it->size());
   }
   printf("\n");
 }
