@@ -117,13 +117,12 @@ long long getNeed(vector<long long> p, long long sum, bool print, long long k){
       }
     }
   }
-
   return total + 1;
 }
 
 
 long long findMin(vector<long long> p, long long k){
-  long long l = *max_element(p.begin(), p.end()), r = accumulate(p.begin(), p.end(), 0);
+  long long l = *max_element(p.begin(), p.end()), r = accumulate(p.begin(), p.end(), 0ll);
   while (l < r){
     long long mid = (l + r) / 2;
 
