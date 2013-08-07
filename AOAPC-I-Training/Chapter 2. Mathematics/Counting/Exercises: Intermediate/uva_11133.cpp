@@ -81,51 +81,22 @@ typedef unsigned long long u64;
  * sizeof CLOCKS_PER_SEC
  */
 
-const int MAXK = 16;
 
-i64 C(int n, int k){
-  if (n < k) return 0;
-  i64 total = 1;
-  for (int i = 0; i < k; i++) {
-    total *= n - i;
-    total /= i + 1;
-  }
-  return total;
-}  
-int K, N;
-i64 upper[MAXK], lower[MAXK];
-i64 a[MAXK];
-
-i64 solve1(){
-  i64 total = 0;
-  for (int i = 0; i < (1 << K); i++) {
-    i64 s = 0;
-    i64 M = N;
-    for (int j = 0; j < K; j++){
-      if ((i & (1 << j)) == 0){
-        M -= lower[j];
-      }else{
-        M -= upper[j] + 1;
-      }
-    }
-    s = C(M + K - 1, K - 1);
-    if (__builtin_parity(i)){
-      total -= s;
-    }else{
-      total += s;
-    }
-  }
-  return total;
-}
+int ways[64];
 int TestNum;
 int main(){
-  while (cin >> K >> N) {
-    //assert(N < 10000);
-    for (int i = 0; i < K; i++) {
-      cin >> lower[i] >> upper[i];
-      assert(lower[i] <= upper[i]);
+  int a1, an;
+  while (cin >> a1 >> an && a1 < an) {
+    memset(ways, 0, sizeof(ways));
+    ways[a1] = 1;
+    for (int i = a1 + 1; i <= an; i++){
+      for (int j = a1; j < i; j++){
+        if (i % (i - j)  == 0){
+          ways[i] += ways[j];
+        }
+      }
     }
-    cout << solve1() << endl;
-  } 
+    cout << a1 << " " << an << " " << ways[an] << endl;
+  }
 }
 

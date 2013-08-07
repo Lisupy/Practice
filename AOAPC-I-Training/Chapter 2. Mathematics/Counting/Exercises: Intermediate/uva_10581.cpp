@@ -81,51 +81,61 @@ typedef unsigned long long u64;
  * sizeof CLOCKS_PER_SEC
  */
 
-const int MAXK = 16;
-
-i64 C(int n, int k){
-  if (n < k) return 0;
-  i64 total = 1;
-  for (int i = 0; i < k; i++) {
-    total *= n - i;
-    total /= i + 1;
-  }
-  return total;
-}  
-int K, N;
-i64 upper[MAXK], lower[MAXK];
-i64 a[MAXK];
-
-i64 solve1(){
-  i64 total = 0;
-  for (int i = 0; i < (1 << K); i++) {
-    i64 s = 0;
-    i64 M = N;
-    for (int j = 0; j < K; j++){
-      if ((i & (1 << j)) == 0){
-        M -= lower[j];
-      }else{
-        M -= upper[j] + 1;
-      }
-    }
-    s = C(M + K - 1, K - 1);
-    if (__builtin_parity(i)){
-      total -= s;
-    }else{
-      total += s;
-    }
-  }
+i64 f[256][16];
+i64 F(int n, int k){
+  if (n < 0) return 0;
+  if (k == 1) return 1;
+  if (n == 0) return 1;
+  if (k <= 0) return 0;
+  i64 &total = f[n][k];
+  if (total != -1) return total;
+  total = 0;
+  total = F(n, k - 1) + F(n - k, k);
   return total;
 }
+
+i64 T(int n, int k){
+  return F(n, k) - F(n, k - 1);
+}
+
+void solve(int m, int n, i64 k){
+  int adjust = 0;
+  while (n != 1){
+    int t = 1;
+    i64 total = 0;
+    //i64 valid = 0;
+    //printf("debug1: %d %d %lld %d %d\n", m, n, k, t, adjust);
+    while (true) {
+      //getchar();
+      i64 s = T(m - t - (n - 1) * (t - 1), n - 1);
+      total = total + s; 
+      //printf("s: %lld, total : %lld\n", s, total);
+      if (total >= k){
+        total -= s;
+        break;
+      }
+      t++;
+    }
+    //printf("debug: %d %d %lld %d %d\n", m, n, k, t, adjust);
+    printf("%d\n", t + adjust);
+    k -= total;
+    m -= t + (n - 1) * (t - 1);
+    adjust += (t - 1);
+    n--;
+  }
+  printf("%d\n", m + adjust);
+}
+
 int TestNum;
 int main(){
-  while (cin >> K >> N) {
-    //assert(N < 10000);
-    for (int i = 0; i < K; i++) {
-      cin >> lower[i] >> upper[i];
-      assert(lower[i] <= upper[i]);
-    }
-    cout << solve1() << endl;
-  } 
+  memset(f, -1, sizeof(f));
+  //cout << T(7, 2) << endl;
+  cin >> TestNum;
+  while (TestNum--) {
+    int m, n;
+    i64 k;
+    cin >> m >> n >> k;
+    solve(m, n, k);
+  }
 }
 
