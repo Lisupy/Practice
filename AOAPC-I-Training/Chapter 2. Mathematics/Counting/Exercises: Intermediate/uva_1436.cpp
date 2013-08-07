@@ -126,7 +126,7 @@ void reset(){
 
 int n, m;
 int TestNum;
-//HDU 2974
+//HDU 2974 AC
 int main(){
   //return 0;
   primes_init();
@@ -191,7 +191,8 @@ int main(){
       total = (total * powMod(pr, factor[i], m)) % m;
       factor[i] = 0;
     }
-    cout << total << endl;
+    printf("%lld\n", total); 
+    //cout << total << endl;
     //printf("%d %d: %lld\n", n, m, total);
   }
 }
