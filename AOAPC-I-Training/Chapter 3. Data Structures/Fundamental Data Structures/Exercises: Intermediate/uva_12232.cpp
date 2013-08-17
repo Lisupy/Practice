@@ -105,6 +105,8 @@ bool unionSet(int u, int v, int V){
   assert(val[n] == 0);
   int pu = find(u);
   int pv = find(v);
+  assert(val[pu] == val[pv]);
+  assert(val[pu] == 0);
   if (pu == pv) return V == (val[u] ^ val[v]);
   if (pu == n) swap(pv, pu);
   father[pu] = pv;
@@ -119,9 +121,6 @@ int getValue(int *a, int len){
     //cout << a[i] << " : " << find(a[i]) << ", " << val[a[i]] << endl;
     M[find(a[i])]++;
     res ^= val[a[i]];
-  }
-  if (M.count(n) % 2){
-    return res ^ val[n];
   }
   for (map<int, int>::iterator it = M.begin(); it != M.end(); it++){
     if (it->first != n && it->second % 2 != 0){
@@ -148,18 +147,21 @@ int main(){
       //string line;
       //getline(cin, line);
       //cout << "[" << line << "]" << endl;
-      char str[300];
-      scanf("%s" , str);    
+      char buf[300];
+      scanf("%s" , buf);    
       //if (!valid) continue;
       //istringstream iss(line.substr(2));
 
-      if (str[0] == 'Q'){
+      if (buf[0] == 'Q'){
         int k; //iss >> k;
         scanf("%d", &k);
         int a[320];
         //for (int i = 0; i < k; i++) iss >> a[i];
+        assert(k < 320);
         for (int i = 0; i < k; i++) scanf("%d", a + i);
+
         if (!valid) continue;
+
         int ans = getValue(a, k);
         if (ans == -1) printf("I don't know.\n");
         else printf("%d\n", ans);
@@ -168,13 +170,15 @@ int main(){
         fact_count++;
         int p, q, v;
         //int tn = sscanf(line.substr(2).c_str(), "%d %d %d", &p, &q, &v); 
-        fgets(str, 300, stdin);
-        int cnt = sscanf(str , "%d%d%d" , &p , &q , &v);  
+        fgets(buf, 300, stdin);
+
+        if (!valid) continue;
+
+        int cnt = sscanf(buf , "%d%d%d" , &p , &q , &v);  
         if(cnt == 2){  
           v = q;  
           q = n;  
         }  
-        if (!valid) continue;
         //if (tn == 2){v = q; q = n;}
         if (!unionSet(p, q, v)){
           valid = false;
