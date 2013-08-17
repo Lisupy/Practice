@@ -130,7 +130,6 @@ void solve(){
       }
     }
     //printf("ndays: %d, eaten: %d, milk: %d\n", ndays, eaten_cow, least_milk);
-    //getchar();
     if (eaten_cow != -1){
       eaten[eaten_cow] = true;
       last_eaten = ndays;
