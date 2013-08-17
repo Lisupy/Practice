@@ -81,17 +81,60 @@ typedef unsigned long long u64;
  * sizeof CLOCKS_PER_SEC
  */
 
-
-
+vector<int> arr_add(vector<int> total, vector<int> a, int shift){
+  if (shift) a.insert(a.begin(), 0);
+  total.resize(max(a.size(), total.size()));
+  for (size_t i = 0; i < a.size(); i++) total[i] += a[i];
+  return total;
+}
+vector<int> arr_mul(vector<int> total, int k){
+  for (size_t i = 0; i < total.size(); i++) total[i] *= k;
+  return total;
+}
+vector<int> solve(){
+  string cmd;
+  vector<int> total(2);
+  while (cin >> cmd){
+    if (cmd == "BEGIN") continue;
+    if (cmd == "END"){
+      //for (auto i : total) cout << i << ", "; cout << endl;
+      return total;
+    }
+    if (cmd == "OP"){
+      string cost; cin >> cost;
+      //cout << cost << endl;
+      total[0] += atoi(cost.c_str());
+    }
+    if (cmd == "LOOP"){
+      string cost; cin >> cost;
+      if (cost == "n") total = arr_add(total, solve(), 1); 
+      else total = arr_add(total, arr_mul(solve(), atoi(cost.c_str())), 0);
+    }
+  }
+  return total;
+}
+void output(vector<int> a){
+  cout << "Runtime = ";
+  while (a.size() && a.back() == 0) a.pop_back();
+  if (a.size() == 0) cout << "0";
+  for (int i = a.size() - 1; i >= 0; i--){
+    if (a[i]){
+      if (i != (int)a.size() - 1) cout << "+";
+      if (i == 0 || a[i] != 1) cout << a[i];
+      if (i >= 1 && a[i] != 1) cout << "*";
+      if (i >= 2) cout << "n^" << i;
+      else if (i == 1) cout << "n"; 
+    }
+  }
+  cout << endl;
+}
 int TestNum;
 int main(){
   int T; cin >> T;
-  cin.ignore();
   while (T--){
     cout << "Program #" << ++TestNum << endl;
-    stack<
+    output(solve());
+    cout << endl;
   }
-
-
 }
 
