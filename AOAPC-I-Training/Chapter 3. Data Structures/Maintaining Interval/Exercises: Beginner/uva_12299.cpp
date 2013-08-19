@@ -92,11 +92,10 @@ struct IntervalTree{
     memset(_min, 0x1f, sizeof(_min));
   }
   bool valid(int L, int R){
-    return qL <= R && L <= qR;
+    return L <= R && qL <= R && L <= qR;
   }
   int queryMin(int o, int L, int R){
     assert(o < maxnode);
-    assert(qL == qR);
     if (!valid(L, R)) return INF;
     if (qL <= L && R <= qR){
       return _min[o];
@@ -110,6 +109,7 @@ struct IntervalTree{
   void updateMin(int o, int L, int R, int v){
     assert(o < maxnode);
     if (!valid(L, R)) return;
+    assert(qL == qR);
     if (qL <= L && R <= qR){
       _min[o] = v;
     }else{
@@ -132,9 +132,7 @@ int main(){
   scanf("%d %d", &n, &q);
   tree.reset();
   for (int i = 1; i <= n; i++) scanf("%d", A + i);
-  for (int i = 1; i <= n; i++){
-    tree.gao(i, i).updateMin(1, 1, n, A[i]);
-  }
+  for (int i = 1; i <= n; i++) tree.gao(i, i).updateMin(1, 1, n, A[i]);
   while (q--){
     char buf[256];
     scanf("%s", buf);
@@ -144,16 +142,10 @@ int main(){
       int from, to; sscanf(buf, "query(%d,%d)", &from, &to);
       printf("%d\n", tree.gao(from, to).queryMin(1, 1, n));
     }else{
-      int len = 6;
-      int shift[300];
-      int shift_len = 0;
-      int t;
-      int ret;
-      while ( (ret = sscanf(buf + len, "%d,", &t)) != EOF ){
-        shift[shift_len++] = t; 
-        len += ret + 1;
-      }
-      //for (int i = 0; i < shift_len; i++) printf("%d ", shift[i]); printf("\n");
+      for (int i = 0; buf[i]; i++) if (!isdigit(buf[i])) buf[i] = ' ';
+      istringstream iss(buf);
+      int shift[300]; int shift_len = 0;
+      while (iss >> shift[shift_len]) shift_len++ ; 
       int val[300];
       for (int i = 0; i < shift_len; i++) val[i] = A[shift[(i + 1)%shift_len]]; 
       for (int i = 0; i < shift_len; i++) tree.gao(shift[i], shift[i]).updateMin(1, 1, n, val[i]);
