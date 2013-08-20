@@ -114,17 +114,17 @@ struct IntervalTree{
     int o, L, R;
     int lo() const { return o * 2; }
     int ro() const { return o * 2 + 1; }
-    Node lch() const { return {o * 2,      L,             (L + R) / 2}; }
-    Node rch() const { return {o * 2 + 1, (L + R) / 2 + 1, R          }; }
-    int  sz()  const { return  R - L - 1; }
+    Node lch() const { return Node(o * 2,     L,              (L + R) / 2);   }
+    Node rch() const { return Node(o * 2 + 1, (L + R) / 2 + 1, R         ); }
+    //int  sz()  const { return  R - L - 1; }
     int value() const { /*printf("value: %d, %d\n", L, R);*/ return xs[R + 1] - xs[L]; } 
     Node(): o(1), L(0), R(0){}
     Node(int _o, int _L, int _R): o(_o), L(_L), R(_R) {}
-    Node(int Max):o(1), L(0), R(Max){ }
+    explicit Node(int Max) :o(1), L(0), R(Max) { }
     void dbg() const {
       printf("Node: %2d= %d, %d\n", o, L, R);
     }
-    //bool valid() const { return o < maxnode && L <= R;}
+    bool valid() const { return o < maxnode && L <= R;}
   };
   int qL, qR;
   int cnt[maxnode];
@@ -133,30 +133,31 @@ struct IntervalTree{
     memset(cnt, 0, sizeof(cnt));
     memset(delay, 0, sizeof(delay));
   }
-  bool overlap(const Node &no){
-    return no.L <= no.R && qL <= no.R && no.L <= qR;
+  bool overlap(const Node no){
+    return qL <= no.R && no.L <= qR;
   }
-  bool contained(const Node &no){
+  bool contained(const Node no){
     return qL <= no.L && no.R <= qR;
   }
-  void pushUp(const Node &no){
+  void pushUp(const Node no){
     assert(no.o < maxnode);
     assert(delay[no.o] == 0);
-    //assert(no.valid()); // for delay
+    assert(no.valid()); 
     cnt[no.o] = cnt[no.lo()] + cnt[no.ro()];
   }
-  void pushDown(const Node &no){
+  void pushDown(const Node no){
     if (delay[no.o]){
       update(no.lch(), delay[no.o], true);
       update(no.rch(), delay[no.o], true);
       delay[no.o] = 0;
     }
+    assert(no.L <= no.R);
     pushUp(no);
   }
-  void update(const Node& no, int v, bool push = false){
+  void update(const Node no, int v, bool push = false){
     //no.dbg();
     if (!push && !overlap(no))return;
-    //assert(no.valid());
+    assert(no.valid());
     if (push || contained(no)){
       delay[no.o] += v;
       if (no.L == no.R) {
@@ -166,17 +167,21 @@ struct IntervalTree{
         if (delay[no.o] > 0){
           cnt[no.o] = no.value();
         }else{
-          pushDown(delay[no.o]);
+          assert(no.L <= no.R);
+          pushDown(no);
         }
       }
     }else{
+      assert(no.L != no.R);
+      assert(no.L <= no.R);
       pushDown(no);
       update(no.lch(), v);
       update(no.rch(), v);
+      assert(no.L <= no.R);
       pushUp(no);
     }
   }
-  int query(const Node& no){
+  int query(const Node no){
     if (!overlap(no)) return 0;
     //assert(no.valid());
     if (contained(no)){
