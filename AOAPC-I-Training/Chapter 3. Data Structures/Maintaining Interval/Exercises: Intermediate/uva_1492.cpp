@@ -107,7 +107,7 @@ void compress(vector<Rect> &rects){
     r.y2 = lower_bound(ys.begin(), ys.end(), r.y2) - ys.begin();
   }
 }
-const int maxnode = 1 << 20;
+const int maxnode = 1 << 18;
 const int maxrange = maxnode - 1;
 struct IntervalTree{
   struct Node{
