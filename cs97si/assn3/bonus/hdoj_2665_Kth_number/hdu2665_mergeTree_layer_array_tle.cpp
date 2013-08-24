@@ -81,7 +81,7 @@ typedef unsigned long long u64;
  * sizeof CLOCKS_PER_SEC
  */
 const int maxnode = 128 * 1024;
-const int maxlayer = 18 + 10; 
+const int maxlayer = 8 + 10; 
 int a[maxnode];
 int n;
 struct MergeTree{
@@ -139,7 +139,7 @@ int Min, Max;
 int m;
 MergeTree tree;
 int bsolve(int from, int to, int k){
-  MergeTree::Node root(1, 0, n - 1);
+  MergeTree::Node root(0, 0, n - 1);
   int lo = Min, hi = Max; //[lo,hi]
   while (lo < hi){
     int mid = (lo + hi + 1) / 2;
@@ -158,7 +158,7 @@ int main(){
     for (int i = 0; i < n; i++) scanf("%d", &a[i]);
     Min = *min_element(a, a + n);
     Max = *max_element(a, a + n);
-    MergeTree::Node root(1, 0, n - 1);
+    MergeTree::Node root(0, 0, n - 1);
     tree._init(root);
     while (m--){
       int i, j, k; scanf("%d %d %d", &i, &j, &k);
