@@ -124,11 +124,36 @@ void reset(){
   memset(factor, 0, sizeof(factor));
 }
 
+template<class T> inline void readint(T& x) 
+{ 
+  char c; 
+  int mul = 1; 
+  while((c = getchar()) != EOF) 
+  { 
+    if(c == '-')mul = -1; 
+    if(c >= '0' && c <= '9') 
+    { 
+      x = c-'0'; 
+      break; 
+    } 
+  } 
+  if(c == EOF){x = EOF;return;} 
+  while(c = getchar()) 
+  { 
+    if(c >= '0' && c <= '9') 
+    { 
+      x = (x<<1)+(x<<3)+(c-'0'); 
+    } 
+    else break; 
+  } 
+  x *= mul; 
+} 
+
 int n, m;
 int TestNum;
 //HDU 2974 AC
 int main(){
-  //return 0;
+  return 0;
   primes_init();
   int t; 
   //cin >> t;

@@ -80,79 +80,37 @@ typedef unsigned long long u64;
  * __builtin_ffs  __builtin_clz  __builtin_ctz __builtin_popcount  __builtin_parity
  * sizeof CLOCKS_PER_SEC
  */
-int N;
 
-int f1[10][100];
-int f2[10];
-void f1_init(){
-  memset(f1, 0, sizeof(f1));
-  for (int i = 0; i <= 9; i++) f1[1][i] = i != N;
-  for (int d = 2; d <= 9; d++){
-    for (int i = 0; i <= 99; i++){
-      for (int j = 0; j <= 9; j++){
-        int n;
-        if (d == 2){
-          if (i >= 10) continue;
-          n = i + j * 10;
-          if (n != N && n / 10 != N && n % 100 != N){
-            f1[d][n] += f1[d - 1][i];
-          }
-        } else {
-          n = i + j * 100;
-          if (n / 100 != N && n != N && n / 10 != N && n % 100 != N){
-            f1[d][n / 10] += f1[d - 1][i];
-          }
-        }
-        if (n == 117){
-          printf("%d: %d %d %d, %d\n", d, n, i, j, f1[d - 1][i]);
+i64 solve(i64 n, i64 m, i64 A, i64 B){
+  i64 total = 0;
+  for (i64 x1 = 0; x1 <= n; x1++){
+    for (i64 y1 = x1 == 0? 0: -m; y1 <= m; y1++){
+      for (i64 x2 = x1; x2 <= n; x2++){
+        for (i64 y2 = (x1 == x2 ? y1 : -m); y2 <= m; y2++){
+          if (abs(x1 - x2) > n) continue;
+          if (abs(y1 - y2) > m) continue;
+          i64 area = abs(x1 * y2 - x2 * y1);
+          if (area <= 0) continue;
+          if (area < 2 * A) continue;
+          if (area > 2 * B) break;
+          i64 x = max(max(abs(x1), abs(x2)), abs(x1 - x2));
+          i64 y = max(max(abs(y1), abs(y2)), abs(y1 - y2));
+          total += (n + 1 - x) * (m + 1 - y);
+          //printf("%lld %lld, %lld %lld : %lld %lld\n", x1, y1, x2, y2, area, total);
         }
       }
     }
   }
-  for (int d = 1; d <= 9; d++){
-    for (int i = 0; i <= 99; i++){ 
-      f2[d] += f1[d][i];
-    }
-  }
-}
-int getSum1(int d){
-  int total = 0;
-  if (d == 1){
-    for (int i = 0; i <= 9; i++){
-      total += f1[d][i];
-    }
-  }else{
-    for (int i = 10; i <= 99; i++){
-      total += f1[d][i];
-    }
-  }
   return total;
 }
-int getSum2(int d){
-  int total = 0;
-  for (int i = 0; i <= d; i++){
-    total += getSum1(i);
-  }
-  return total;
-}
-int getSum3(int B){
-  int total = 0;
-  int s = k * 10 + last_d;
-  if (k != N && s != N && s % 100 != N && s % 10 != N){
-    total += getSum3(B % ss);
-  }
-  return total;
-}
+
 int TestNum;
 int main(){
-  int A, B;
-  while (cin >> A >> B >> N && A != -1){
-    f1_init();
-    for (int i = 0; i <= 9; i++) {
-      printf("%2d: %d, %d %d\n", i, f2[i], getSum1(i), getSum2(i));
-    }
-    cout << getSum3(B) - getSum3(A - 1) << endl;
+  int T; cin >> T;
+  while (T--) {
+    int n, m, A, B;
+    cin >> n >> m >> A >> B;
+    cout << solve(n, m, A, B) << endl;
   }
-
 }
 

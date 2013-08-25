@@ -80,79 +80,45 @@ typedef unsigned long long u64;
  * __builtin_ffs  __builtin_clz  __builtin_ctz __builtin_popcount  __builtin_parity
  * sizeof CLOCKS_PER_SEC
  */
-int N;
+int best;
+int pos;
+void leastLeaf(vector<int> post_order, vector<int> in_order, int sum){
+  if (post_order.size() == 0) return;
+  if (post_order.size() == 1){
+    sum += post_order[0]; 
+    if (best > sum){
+      best = sum;
+      pos = post_order[0];
+    }
+    return;
+  }
+  int root = post_order.back();
+  int lsz = find(in_order.begin(), in_order.end(), root) - in_order.begin();
+  //int rsz = post_order.size() - lsz - 1;
+  vector<int> l_post_order(post_order.begin(), post_order.begin() + lsz);
+  vector<int> l_in_order(in_order.begin(), in_order.begin() + lsz);
+  vector<int> r_post_order(post_order.begin() + lsz, post_order.end() - 1);
+  vector<int> r_in_order(in_order.begin() + lsz + 1, in_order.end());
+  leastLeaf(l_post_order, l_in_order, sum + root); 
+  leastLeaf(r_post_order, r_in_order, sum + root);
+}
+  
 
-int f1[10][100];
-int f2[10];
-void f1_init(){
-  memset(f1, 0, sizeof(f1));
-  for (int i = 0; i <= 9; i++) f1[1][i] = i != N;
-  for (int d = 2; d <= 9; d++){
-    for (int i = 0; i <= 99; i++){
-      for (int j = 0; j <= 9; j++){
-        int n;
-        if (d == 2){
-          if (i >= 10) continue;
-          n = i + j * 10;
-          if (n != N && n / 10 != N && n % 100 != N){
-            f1[d][n] += f1[d - 1][i];
-          }
-        } else {
-          n = i + j * 100;
-          if (n / 100 != N && n != N && n / 10 != N && n % 100 != N){
-            f1[d][n / 10] += f1[d - 1][i];
-          }
-        }
-        if (n == 117){
-          printf("%d: %d %d %d, %d\n", d, n, i, j, f1[d - 1][i]);
-        }
-      }
-    }
-  }
-  for (int d = 1; d <= 9; d++){
-    for (int i = 0; i <= 99; i++){ 
-      f2[d] += f1[d][i];
-    }
-  }
-}
-int getSum1(int d){
-  int total = 0;
-  if (d == 1){
-    for (int i = 0; i <= 9; i++){
-      total += f1[d][i];
-    }
-  }else{
-    for (int i = 10; i <= 99; i++){
-      total += f1[d][i];
-    }
-  }
-  return total;
-}
-int getSum2(int d){
-  int total = 0;
-  for (int i = 0; i <= d; i++){
-    total += getSum1(i);
-  }
-  return total;
-}
-int getSum3(int B){
-  int total = 0;
-  int s = k * 10 + last_d;
-  if (k != N && s != N && s % 100 != N && s % 10 != N){
-    total += getSum3(B % ss);
-  }
-  return total;
-}
 int TestNum;
 int main(){
-  int A, B;
-  while (cin >> A >> B >> N && A != -1){
-    f1_init();
-    for (int i = 0; i <= 9; i++) {
-      printf("%2d: %d, %d %d\n", i, f2[i], getSum1(i), getSum2(i));
-    }
-    cout << getSum3(B) - getSum3(A - 1) << endl;
+  string line;
+  while (getline(cin, line) && line.size()){
+    
+    stringstream iss(line);
+    vector<int> in_order((istream_iterator<int>(iss)), istream_iterator<int>());
+    getline(cin, line);
+    iss.str(line);
+    iss.clear();
+    vector<int> post_order((istream_iterator<int>(iss)), istream_iterator<int>());
+    best = 0xfffff; 
+    leastLeaf(post_order, in_order, 0);
+    cout << pos << endl;
   }
-
 }
+
 
