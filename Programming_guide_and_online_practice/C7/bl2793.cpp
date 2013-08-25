@@ -34,18 +34,31 @@ long long extend_gcd(long long A, long long B, long long &x, long long &y){
 }
 
 bool gao(){
-/*
-  for (int i = 1; i <= n; i++) {
-    for (int j = i + 1; j <= n; j++){
-      if (a[i] == 0 || a[j] == 0) 
-        continue;
-      if (gcd(a[i], a[j]) != 1){
-        return false;
-      }
-    }
   }
-*/
-  for (int i = 1; i<= n; i++) {
+
+int main(){
+  while (scanf("%d", &n) && n){
+    for (int i = 1; i <= n; i++){
+      scanf("%lld", &a[i]);
+    }
+    set<int> S;
+    for (int i = 1; i <= n; i++){
+      set.insert(a[i]);
+    }
+
+    vector<int> aa(S.begin(), S.end());
+    
+    long long LCM = aa[1];
+    for (int ii = 1; i <= aa.size(); i++){
+      LCM = lcm(LCM, aa[i]);
+    }
+
+    for (int i = 1; i <= n; i++){
+      if (a[i] != 0)
+        s *= a[i];
+    }
+    s = LCM;
+    for (int i = 1; i<= n; i++) {
     if (a[i] == 0){
       b[i] = 0;
       continue;
@@ -61,42 +74,6 @@ bool gao(){
     b[i] = (x*t%s + s)%s;
   }
   return true;
-}
 
-int main(){
-  while (scanf("%d", &n) && n){
-    for (int i = 1; i <= n; i++){
-      scanf("%lld", &a[i]);
-    }
-/*
-    for (int i = 1; i <= n; i++){
-      for (int j = 1; j <= n; j++){
-        if (i != j && a[i] >= a[j] && a[j] && a[i] % a[j] == 0){
-          a[j] = 0;
-        }
-      }
-    }
-    */
-    
-    long long LCM = a[1];
-    for (int i = 1; i <= n; i++){
-      LCM = lcm(LCM, a[i]);
-    }
-
-    for (int i = 1; i <= n; i++){
-      if (a[i] != 0)
-        s *= a[i];
-    }
-    s = LCM;
-
-    if (gao()){
-      for (int i = 1; i <= n; i++){
-        printf("%lld ", b[i] );
-      }
-      printf("\n");
-    }else{
-      printf("NO\n");
-    }
-  }
 }
 
