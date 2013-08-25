@@ -79,6 +79,9 @@ using namespace std;
  */
 
 
+int gcd(int a, int b){
+  return b == 0 ? a : gcd(b, a % b);
+}
 struct Equation{
   int a, b, c;
   void display(){
@@ -87,11 +90,15 @@ struct Equation{
   void neg(){
     a = -a, b = -b, c = -c;
   }
+  void format(){
+    int g = gcd(gcd(abs(a), abs(b)), abs(c));
+    a /= g, b /= g, c/= g;
+  }
 };
 Equation eqs[2];
 struct Res{
   int type;
-  int a, b;
+  int upper, lower;
 };
 Res res[2];
 int intFromStr(string s){
@@ -120,35 +127,51 @@ void input(){
   }
   cin.ignore();
 }
-int gcd(int a, int b){
-  return b == 0 ? a : gcd(b, a % b);
-}
+bool valid;
 void solve(){
+  valid = true;
+  for (int i = 0; i < 2; i++){
+    if (eqs[0].a == eqs[0].b
+  eqs.format();
   if (eqs[0].b < 0) eqs[0].neg();
   if (eqs[1].b < 0) eqs[1].neg();
   eqs[0].display(), eqs[1].display();
-  res[0].a = eqs[0].c * eqs[1].b - eqs[1].c * eqs[0].b;
-  res[0].b = eqs[0].a * eqs[1].b - eqs[1].a * eqs[0].b;
+  if (eqs[0].b == 0 && eqs[0].a != 0){
+    res[0].upper = eqs[0].c, res[0].lower = eqs[0].a;
+  }else if (eqs[1].b == 0){
+    res[0].upper = eqs[1].c, res[0].lower = eqs[1].a;
+  }else{
+    res[0].upper = eqs[0].c * eqs[1].b - eqs[1].c * eqs[0].b;
+    res[0].lower = eqs[0].a * eqs[1].b - eqs[1].a * eqs[0].b;
+  }
   if (eqs[0].a < 0) eqs[0].neg();
   if (eqs[1].a < 0) eqs[1].neg();
-  res[1].a = eqs[0].c * eqs[1].a - eqs[1].c * eqs[0].a;
-  res[1].b = eqs[0].b * eqs[1].a - eqs[1].b * eqs[0].a;
-  int g0 = gcd(abs(res[0].a), abs(res[0].b));
-  if (g0 != 0) res[0].a /= g0, res[0].b /= g0;
-  int g1 = gcd(abs(res[1].a), abs(res[1].b));
-  if (g1 != 0) res[1].a /= g1, res[1].b /= g1;
-  if (res[0].b < 0) res[0].b = -res[0].b, res[0].a = -res[0].a;
-  if (res[1].b < 0) res[1].b = -res[1].b, res[0].a = -res[1].a;
+  if (eqs[0].a == 0 && eqs[0].b != 0){
+    res[1].upper = eqs[0].c, res[1].lower = eqs[0].b;
+  }else if (eqs[1].a == 0){
+    res[0].upper = eqs[1].c, res[0].lower = eqs[1].a;
+  }else{
+    res[1].upper = eqs[0].c * eqs[1].a - eqs[1].c * eqs[0].a;
+    res[1].lower = eqs[0].b * eqs[1].a - eqs[1].b * eqs[0].a;
+  }
+  int g0 = gcd(abs(res[0].upper), abs(res[0].lower));
+  if (g0 != 0) res[0].upper /= g0, res[0].lower /= g0;
+  int g1 = gcd(abs(res[1].upper), abs(res[1].lower));
+  if (g1 != 0) res[1].upper /= g1, res[1].lower /= g1;
+  if (res[0].lower < 0) res[0].lower = -res[0].lower, res[0].upper = -res[0].upper;
+  if (res[1].lower < 0) res[1].lower = -res[1].lower, res[0].upper = -res[1].upper;
 }
 
 void output(){
+  cout << "[";
   for (int i = 0; i < 2; i++) {
     Res &r = res[i];
-    if (r.b == 0 && r.a != 0) printf("don't know\n");
-    else if (r.b == 0 && r.a == 0) printf("0\n");
-    else if (r.b == 1) printf("%d\n", r.a);
-    else printf("%d/%d\n", r.a, r.b);
+    if (r.lower == 0) printf("don't know\n");
+    else if (r.upper == 0 && r.lower == 0) printf("0\n");
+    else if (r.lower == 1) printf("%d\n", r.upper);
+    else printf("%d/%d\n", r.upper, r.lower);
   }
+  cout << "]" << endl;
 }
 int TestNum;
 int main(){
