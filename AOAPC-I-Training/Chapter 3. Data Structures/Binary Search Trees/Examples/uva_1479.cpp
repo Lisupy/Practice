@@ -299,6 +299,7 @@ int input(){
   return 1;
 }
 int main(){
+  //return 0;
   //dbg = true;
   //Treap::Node* root = Treap::nil;
   //Treap::insert(root, 1);
