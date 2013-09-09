@@ -171,11 +171,21 @@ vector<int> Catalan(int n){
   res = bignDiv(C(2 * n, n), n + 1);
   return res;
 }
+vector<int> Catalan2(int n){
+  vector<int> &res = Catalan_cache[n];
+  if (Catalan_visited[n]) return res;
+  Catalan_visited[n] = true;
+  if (n == 0) res = bign1;
+  else res = bignDiv(bignMul(Catalan2(n - 1), vector<int>(1, 4*n-2) ), n + 1);
+  return res;
+}
+
 int TestNum;
 int main(){
   int i;
   while (cin >> i) {
-    cout << strFromBign(Catalan(i)) << endl;
+    //cout << strFromBign(Catalan(i)) << endl;
+    cout << strFromBign(Catalan2(i)) << endl;
   }
 }
 
