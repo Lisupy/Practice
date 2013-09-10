@@ -78,23 +78,27 @@ using namespace std;
  * sizeof CLOCKS_PER_SEC
  */
 
-
+double f_cache[32];
+bool visited[32];
+double f(int n, double p){
+  double &res = f_cache[n];
+  if (visited[n]) return res;
+  visited[n] = true;
+  if (n == 0) res = 1;
+  else{
+    double f1 = f(n-1, p);
+    double x = 0.5/f1;
+    if (p >= x) res = f1 * (p + 1);
+    else res = f1 * (x + 1) * (1-x)/(1-p) + (x-p)/(1-p);
+  }
+  return res;
+}
 int main(){
   int n;
   double t;
   while (cin >> n >> t && n){
-    double expect = 0;
-    if (t >= 0.5){
-      expect = pow((1 + t) / 2, n) * pow(2, n);
-    }else{
-      double acc = 1;
-      for (int i = 1; i <= n; i++){
-        expect += (0.5 - t) / (1 - t) * acc;
-        acc *= 2 * 0.75 * 0.5 / (1 - t);
-      }
-      expect += acc;
-    }
-    printf("%.03lf\n", expect);
+    memset(visited, 0, sizeof(visited));
+    printf("%.03lf\n", f(n, t));
   }
 }
 
