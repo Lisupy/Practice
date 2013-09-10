@@ -90,19 +90,13 @@ unsigned long long pow_mod(unsigned long long p, unsigned long long n, unsigned 
   return s;
 }
 
+//p^n
 unsigned long long pow_first(unsigned long long p, unsigned long long n){
-  //while (p > 1000000) p /= 10;
-  unsigned long long s = 1;
-  while (n){
-    if (n % 2) s = s * p;
-    p = p * p;
-    while (s > 10000000000) s /= 10;
-    while (p > 10000000000) p /= 10;
-    n /= 2;
-  }
-  while (s >= 1000) s /= 10;
-  while (s < 100) s *= 10;
-  return s;
+  double s1 = n * log10(p);
+  s1 -= (int)s1;
+  //cout << s1 << endl;
+  //cout << fmod(n * log10(p), 1) << endl;
+  return pow(10, s1 + 2);
 }
 
 int main(){
