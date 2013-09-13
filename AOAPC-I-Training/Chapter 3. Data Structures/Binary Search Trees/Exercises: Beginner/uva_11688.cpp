@@ -102,16 +102,15 @@ void calcDepth(int s, int d){
   calcDepth(r[s], d + 1);
 }
 
-void calcAns(int s, int fa){
-  if (s == 0) return;
-  if (fa == 0) ans[s] = max(height[l[s]], height[r[s]]) + 1;
-  if (l[fa] == s){
-    ans[s] = max(height[l[s]], max(height[r[s]], height[r[fa]]) + depth[fa]) + 1;
-  }else{
-    ans[s] = max(height[r[s]], max(height[l[s]], height[l[fa]]) + depth[fa]) + 1;
-  }
-  calcAns(l[s], s);
-  calcAns(r[s], s);
+void calcAns(int i, int lh = 0, int rh = 0, int lth = 0, int rth = 0){
+  if (i == 0) return;
+  ans[i] = 0;
+  ans[i] = max(ans[i], lh + 1);
+  ans[i] = max(ans[i], rh + 1);
+  ans[i] = max(ans[i], lth + height[l[i]] + 1);
+  ans[i] = max(ans[i], rth + height[r[i]] + 1);
+  calcAns(l[i], lh, max(rh, 1 + rth + height[r[i]]), lth, 1 + rth);
+  calcAns(r[i], max(lh, 1 + lth + height[l[i]]), rh, lth + 1, rth);
 }
 int TestNum;
 int main(){
@@ -124,7 +123,7 @@ int main(){
     int root = find(inDegree + 1, inDegree + N + 1, 0) - inDegree;
     calcHeight(root);
     calcDepth(root, 1);
-    calcAns(root, 0);
+    calcAns(root);
     for (int i = 1; i <= N; i++) printf("%d\n", ans[i]);
   }
 }
