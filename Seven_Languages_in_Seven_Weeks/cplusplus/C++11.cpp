@@ -9,27 +9,6 @@
 #include<queue>
 using namespace std;
 
-int foo(int x)
-{
-  for (size_t i = 0; i < asdf; i++) {
-    sdifj
-  }
-  for (int i = 0; i < ; i++) {
-    
-  }
-  
-  for (auto sdlkfj = sdlkfj.begin(); sdlkfj != sdlkfj.end(); ++sdlkfj) {
-    asdl;kfj
-  } 
-  for (auto isdf = isdf.begin(); isdf != isdf.end(); ++isdf) {
-    std::cout << *isdf << std::endl;
-  }
-
-  for (i = 0; i < count; i++) {
-    
-  }
-	return x;
-}
 
 void cin_test(){
   if (cin){
@@ -65,7 +44,9 @@ void stack_test(){
   stack<int> s4(dq1);
 }
 
-
+int foo(int i){
+  return i;
+};
 void lambda_test()
 {
 	[] { cout << "Hello, World" << endl; } ();
@@ -78,11 +59,11 @@ void lambda_test()
     int&& s = 0;
     int arr[4];
 	for (const int& x : {0,1,2})
-    	s=max(s,foo(x));
+      s=max(s,foo(x));
 	printf("%d", s);
 	for (const int& x : arr)
-    	s=max(s,foo(x));
-    //generate_n (myarray, 9, UniqueNumber);
+      s=max(s,foo(x));
+    ////generate_n (myarray, 9, UniqueNumber);
 	system("Pause");
 }
 
@@ -96,9 +77,31 @@ void scope_test(){
   };
   A::foo();
 }
+
+struct A{
+  A() {
+    cout << __func__ << endl;
+  }
+  virtual ~A() {
+    cout << __func__ << endl;
+  }
+};
+struct B:A{
+  B(){
+    cout << __func__ << endl;
+  }
+  ~B() {
+    cout << __func__ << endl;
+  }
+};
+void class_test(){
+  A();
+ B();
+}
 int main(){
-  scope_test();
-  stack_test();
-  vector_test();
-  cin_test();
+  class_test();
+  //scope_test();
+  //stack_test();
+  //vector_test();
+  //cin_test();
 }
