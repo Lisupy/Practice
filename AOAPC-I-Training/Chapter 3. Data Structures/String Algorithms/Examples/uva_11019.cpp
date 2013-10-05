@@ -86,16 +86,14 @@ const double PI = acos(-1);
 
 const int sigma_size = 26;
 const int maxnode = 128 * 128;
+const int MAXN = 1003;
 struct AC{
-  //vector<int> val[maxnode]; 
-  int val[maxnode][128];
-  int valsz[maxnode];
+  vector<int> val[maxnode]; 
   int ch[maxnode][sigma_size];
   int f[maxnode];
   int sz;
   void reset(){
-    //for (int i = 0; i< maxnode; i++) val[i].clear();
-    memset(valsz, 0, sizeof(valsz));
+    for (int i = 0; i< maxnode; i++) val[i].clear();
     memset(ch, 0, sizeof(ch));
     memset(f,  0, sizeof(f));
     sz = 1;
@@ -104,8 +102,6 @@ struct AC{
     reset();
   }
   int idx(char c){
-    //if (islower(c)) return c - 'a';
-    //else return c - 'A' + 26;
     assert(islower(c));
     return c - 'a';
   }
@@ -118,9 +114,7 @@ struct AC{
       if (ch[u][c] == 0) ch[u][c] = newNode();
       u = ch[u][c];
     }
-    //val[u].push_back(v);
-    val[u][valsz[u]++] = v;
-    //assert(val[u].size() <= 1);
+    val[u].push_back(v);
   }
   void getFail(){
     queue<int> Q;
@@ -146,21 +140,21 @@ struct AC{
 };
 AC ac;
 int N, M, X, Y;
-char textMat[1024][1024];
-char patternMat[1024][1024];
-int matchLineCnt[1024][1024];
+char textMat[MAXN][MAXN];
+char patternMat[MAXN][MAXN];
+int matchLineCnt[MAXN][MAXN];
 
 int solve(){
   memset(matchLineCnt, 0, sizeof(matchLineCnt));
   ac.reset();
   for (int i = 0; i < X; i++) ac.insert(patternMat[i], i, Y);
-  //ac.getFail();
+  ac.getFail();
   for (int i = 0; i < N; i++){
     int u = 0;
     for (int j = 0; j < M; j++){
       int c = ac.idx(textMat[i][j]);
       u = ac.ch[u][c];
-      for (int k = 0; k < ac.valsz[u]; k++){
+      for (size_t k = 0; k < ac.val[u].size(); k++){
         int ln = ac.val[u][k];
         if (i - ln >= 0 && j + 1 - Y >= 0){
           matchLineCnt[i - ln][j + 1 - Y]++;
@@ -172,9 +166,7 @@ int solve(){
   for (int i = 0; i < N; i++){
     for (int j = 0; j < M; j++){
       if (matchLineCnt[i][j] == X) total++;
-      //printf("%2d", matchLineCnt[i][j]);
     }
-    //printf("\n");
   }
   return total;
 }
