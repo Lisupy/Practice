@@ -81,7 +81,7 @@ typedef unsigned long long u64;
  * sizeof CLOCKS_PER_SEC
  * (1 << (31 - __builtin_clz(100) ) == 64;
  */
-
+//g++ TLE; c++ 422ms 
 vector<string> dict;
 
 int TestNum;

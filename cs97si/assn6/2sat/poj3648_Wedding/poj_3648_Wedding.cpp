@@ -88,9 +88,12 @@ struct TwoSAT{
   int n;
   vector<int> G[maxn*2];
   bool mark[maxn*2];
+  bool musttrue[maxn*2];
   int S[maxn*2], c;
   TwoSAT():n(0), c(0){}
   bool dfs(int x){
+    //printf("dfs: %d\n", x);
+    if (musttrue[x^1]) return false;
     if (mark[x^1]) return false;
     if (mark[x]) return true;
     mark[x] = true;
@@ -104,52 +107,67 @@ struct TwoSAT{
     n = _n;
     for (int i = 0; i < n * 2; i++) G[i].clear();
     memset(mark, 0, sizeof(mark));
+    memset(musttrue, 0, sizeof(musttrue));
   }
-  void add_clause(int x, int sval, int y, int aval){
-    x = x * 2 + sval;
-    y = y * 2 + aval;
+  void add_clause(int x, int xval, int y, int yval){
+    x = x * 2 + xval;
+    y = y * 2 + yval;
     G[x^1].push_back(y);
     G[y^1].push_back(x);
   }
+  void set_true(int x, int xval){
+    //printf("settrue, %d, %d\n", x, xval);
+    x = x * 2 + xval;
+    musttrue[x] = true;
+  }
   bool solve(){
+    for (int i = 0; i < n * 2; i += 2){
+      if (musttrue[i] && musttrue[i + 1]) return false;
+    }
     for (int i = 0; i < n * 2; i += 2){
       if (!mark[i] && !mark[i + 1]){
         c = 0;
         if (!dfs(i)){
+          //printf("\n");
           while (c > 0) mark[S[--c]] = false;
           if (!dfs(i + 1)) return false;
+          //printf("\n");
         }
+        //printf("\n");
       }
     }
+    //for (int i = 0; i < n * 2; i += 2){
+      //printf("%d: %d %d\n", i/2, mark[i], mark[i + 1]);
+    //}
     return true;
   }
 };
 TwoSAT solver;
-int S, A, t;
+int n, m, t;
 int TestNum;
 int main(){
   ios_base::sync_with_stdio(false); 
   scanf("%d", &TestNum);
   while (TestNum--){
-    scanf("%d%d%d", &S, &A, &t);
-    solver.init(S + A + 1);
+    scanf("%d%d%d", &n, &m, &t);
+    solver.init(n + m + 1);
     while (t--){
-      int s1, a1, s2, a2; scanf("%d%d%d%d", &s1, &a1, &s2, &a2);
-      int sval = a2 > a1;
-      int aval = s2 > s1;
-      a1 += S;
-      a2 += S;
-      if (s1 == s2 && a1 == a2) continue;
-      if (s2 != s1 && a2 != a1){
-        solver.add_clause(s1, sval, s2, sval);
-        solver.add_clause(s1, sval, a2, aval);
-        solver.add_clause(s2, sval, a1, aval);
-        solver.add_clause(a2, aval, a1, aval);
+      int x1, y1, x2, y2; scanf("%d%d%d%d", &x1, &y1, &x2, &y2);
+      int xval = y2 > y1;
+      int yval = x2 > x1;
+      y1 += n;
+      y2 += n;
+      if (x1 == x2 && y1 == y2) continue;
+      if (x2 != x1 && y2 != y1){
+        solver.add_clause(x1, xval, x2, xval);
+        solver.add_clause(x1, xval, y2, yval);
+        solver.add_clause(x2, xval, y1, yval);
+        solver.add_clause(y2, yval, y1, yval);
       }else{
-        if (s1 == s2){
-          solver.add_clause(s1, sval, s1, sval);
+        if (x1 == x2){
+          solver.set_true(x1, xval);
         }else{
-          solver.add_clause(a1, aval, a1, aval);
+          solver.set_true(y1, yval);
         }
       }
     }
