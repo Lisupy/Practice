@@ -78,41 +78,58 @@ using namespace std;
  * sizeof CLOCKS_PER_SEC
  */
 
-const int MAXN = 5120;
+const int MAX_V = 5100;
 const int INF = 0x1f1f1f1f;
 int s, a, b;
 
-int flow[MAXN][MAXN];
-int cap[MAXN][MAXN];
 int source, dest;
 
-int maxFlow(){
-  int totalFlow = 0;
-  while (true){
-    //cout << "----" << endl;
-    vector<int> f(dest + 1); f[source] = INF;
-    queue<int> q; q.push(source);
-    vector<int> p(dest + 1);
-    while (!q.empty() && f[dest] == 0){
-      int u = q.front(); q.pop();
-      //cout << u << endl;
-      for (int v = 0; v <= dest; v++){
-        int resdiual = cap[u][v] - flow[u][v];
-        if (resdiual > 0 && f[v] == 0){
-          //cout << v << ", " << resdiual << endl;
-          p[v] = u;
-          f[v] = min(f[u], resdiual);
-          q.push(v);
-        }
+
+struct edge{
+  int to, cap, rev;
+};
+
+vector<edge> G[MAX_V];
+bool used[MAX_V];
+void add_edge(int from, int to, int cap){
+  G[from].push_back({to, cap, (int)G[to].size()});
+  G[to].push_back({from, 0, (int)G[from].size() - 1});
+}
+
+int dfs(int v, int t, int f){
+  if (v == t) return f;
+  used[v] = true;
+  for (size_t i = 0; i < G[v].size(); i++){
+    edge &e = G[v][i];
+    if (!used[e.to] && e.cap > 0){
+      int d = dfs(e.to, t, min(f, e.cap));
+      if (d > 0){
+        e.cap -= d;
+        G[e.to][e.rev].cap += d;
+        return d;
       }
     }
-    //cout << f[dest] << endl;
-    if (f[dest] == 0) break;
-    for (int u = dest; u != source; u = p[u]) flow[p[u]][u] += f[dest], flow[u][p[u]] -= f[dest];
-    totalFlow += f[dest];
   }
-  return totalFlow;
+  return 0;
 }
+
+int max_flow(int so, int t){
+  int flow = 0;
+  while (true){
+    memset(used, 0, sizeof(used));
+    int f = dfs(so, t, INF);
+    if (f == 0) return flow;
+    flow += f;
+  }
+  return flow;
+}
+
+void reset(){
+  for (int i = 0; i < MAX_V; i++){
+    G[i].clear();
+  }
+}
+
 int dx[] = {0, 0, 1, -1};
 int dy[] = {1,-1, 0, 0};
 bool isValid(int x, int y){
@@ -127,31 +144,27 @@ int outID(int x, int y){
 int main(){
   int TestNum; cin >> TestNum;
   while (TestNum--){
-    memset(cap, 0, sizeof(cap));
-    memset(flow, 0, sizeof(flow));
+    reset();
     cin >> s >> a >> b;
     source = 0, dest = 2 * a * s + 1;
     for (int x1 = 1; x1 <= s; x1++){
       for (int y1 = 1; y1 <= a; y1++){
-        cap[inID(x1, y1)][outID(x1, y1)] = 1;
-        //cout << inID(x1, y1) << ", " << outID(x1, y1) << endl;
+        add_edge(inID(x1, y1), outID(x1, y1), 1);
         for (int i = 0; i < 4; i++){
           int x2 = x1 + dx[i], y2 = y1 + dy[i];
           if (isValid(x2, y2)){
-            cap[outID(x1, y1)][inID(x2, y2)] = 1;
+            add_edge(outID(x1, y1), inID(x2, y2), 1);
           }else{
-            cap[outID(x1, y1)][dest] = 1;
-            //cout << x1 << ", " << y1 << endl;
+            add_edge(outID(x1, y1), dest, 1);
           }
         }
       }
     }
     for (int i = 0; i < b; i++){
       int x, y; cin >> x >> y;
-      cap[source][inID(x, y)]++;
-      //cout << inID(x, y) << endl;
+      add_edge(source, inID(x, y), 1);
     }
-    int maxflow = maxFlow();
+    int maxflow = max_flow(source, dest);
     //cout << maxflow << endl;
     if (maxflow == b){
       cout << "possible" << endl;
