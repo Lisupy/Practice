@@ -85,11 +85,10 @@ typedef unsigned long long u64;
 
 int TestNum;
 int main(){
-  return 0;
   int n;
   while (scanf("%d", &n) && n){
     multiset<int> S;
-    int total = 0;
+    i64 total = 0;
     while (n--){
       int k; scanf("%d", &k);
       while (k--) {
@@ -100,7 +99,7 @@ int main(){
       S.erase(S.find(*S.rbegin()));
       S.erase(S.begin());
     }
-    printf("%d\n", total);
+    printf("%lld\n", total);
   }
 }
 
