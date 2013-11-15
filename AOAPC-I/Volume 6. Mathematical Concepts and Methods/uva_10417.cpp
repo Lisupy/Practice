@@ -81,73 +81,89 @@ typedef unsigned long long u64;
  * sizeof CLOCKS_PER_SEC
  * (1 << (31 - __builtin_clz(100) ) == 64;
  */
-
+const int STSZ = 13 * 13 * 13 * 13 * 13;
 int n;
 int giftNum[5];
-double a[16][5];
+double p[16][5];
 void input(){
   cin >> n;
   for (int i = 0; i < 5; i++) cin >> giftNum[i];
   for (int i = 0; i < n; i++) {
-    double total = 0;
-    for (int j = 0; j < 5; j++){
-      cin >> a[i][j];
-      if (giftNum[j] == 0) a[i][j] = 0;
-      total += a[i][j];
-    }
-    for (int j = 0; j < 5; j++){
-      a[i][j] /= total;
-      cout << a[i][j] << ", ";
-    }
-    cout << endl;
+    for (int j = 0; j < 5; j++) cin >> p[i][j];
   }
-}
-int lowbit(int x) { return x & -x; }
-double p[5];
-double p1[5];
-double p2[5];
-double p3[5];
-void solve(){
-  for (int i = 0; i < 5; i++){
-    p1[i] = 0;
-    p2[i] = 0;
-    for (int comb = 0; comb < (1 << n); comb++) if (__builtin_popcount(comb) == giftNum[i]){
-      double t = 1;
-      for (int j = 0; j < n; j++){
-        if ((1 << j) & comb) t *= a[j][i];
-        else t *= (1 - a[j][i]);
-      }
-      if (comb & 1) p1[i] += t;
-      else p2[i] += t;
-    }
-  }
-  double total1 = 0;
-  for (int i = 0; i < 5; i++){
-    p3[i] = p1[i] + p2[i];
-    total1 += p1[i];
-    p[i] = p1[i] / (p3[i]) / giftNum[i];
-  }
-  cout << total1 << endl;
-  double total = 0;
-  for (int i = 0; i < 5; i++){
-    p[i] = p[i] * p1[i] / total1;
-    total += p[i];
-  }
-  cout << total << endl;
-  for (int i = 0; i < 5; i++){
-    cout << i << ": " << p1[i] << ", " << p2[i] << ", " << p[i] << endl;
-  }
-  int best_i = -1;
-  for (int i = 0; i < 5; i++){
-    if (giftNum[i] && (best_i == -1 || p[i] > p[best_i])) {
-      best_i = i;
-    }
-  }
-  printf("%d %.03lf\n", best_i + 1, p[best_i]);
 }
 
+bool visited[STSZ];
+double cache[STSZ]; 
+
+int IDFromST(vector<int> st){
+  int s = 0;
+  for (size_t i = 0; i < st.size(); i++){
+    s = s * 13 + st[i];
+  }
+  return s;
+}
+
+vector<int> STFromID(int id){
+  vector<int> st(5);
+  for (size_t i = 0; i < st.size(); i++){
+    st[i] = id % 13;
+    id /= 13;
+  }
+  reverse(st.begin(), st.end());
+  return st;
+}
+
+void reset(){
+  memset(visited, 0, sizeof(visited));
+  memset(cache, 0, sizeof(cache));
+}
+
+double f(vector<int> st, int k){
+  for (int i = 0; i < 5; i++){
+    if (st[i] == -1) return 0;
+  }
+  if (k == n) return 1;
+  int id = IDFromST(st);
+  double &res = cache[id];
+  if (visited[id]) return res;
+  visited[id] = true;
+  res = 0;
+  for (int i = 0; i < 5; i++){
+    vector<int> nst = st;
+    nst[i]--;
+    res += p[k][i] * f(nst, k + 1);
+  }
+  return res;
+}
+
+void solve(){
+  reset();
+  vector<int> st(giftNum, giftNum + 5);
+  double maxProbaility = 0;
+  int bestChoice = 0;
+  double totalPro = 0;
+  for (int i = 0; i < 5; i++){
+    vector<int> nst = st;
+    nst[i]--;
+    double pro = f(nst, 1) * p[0][i];
+    //cout << i << ": " << pro << endl;
+    totalPro += pro;
+    if (giftNum[i] == 0) continue;
+    pro /= giftNum[i];
+    if (pro > maxProbaility){
+      maxProbaility = pro;
+      bestChoice = i;
+    }
+  }
+  //cout << maxProbaility << endl;
+  //cout << totalPro << endl;
+  printf("%d %.03lf\n", bestChoice + 1, maxProbaility / totalPro);
+}
 int TestNum;
 int main(){
+  int id = 30;
+  assert( id == IDFromST(STFromID(id)));
   cin >> TestNum;
   while (TestNum--) {
     input();
