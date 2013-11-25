@@ -84,7 +84,7 @@ const double PI = acos(-1);
  * decltype // deprecated
  */
 const int maxnode = 1024 * 1024;
-const int sigma_size = 27;
+const int sigma_size = 26 + 26 + 10 + 1;
 struct Trie{
   int ch[maxnode][sigma_size]; 
   i64 isWord[maxnode];
@@ -97,10 +97,18 @@ struct Trie{
     memset(prefixCnt, 0, sizeof(prefixCnt));
   }
   Trie (): sz(1){ reset();}
-  int idx(char c) { return c == 0? c :c - 'a' + 1;; }
+  int idx(char c) { 
+    if (c == 0)     return 0;
+    if (isdigit(c)) return c - '0' + 1;
+    if (islower(c)) return c - 'a' + 1 + 10;
+    if (isupper(c)) return c - 'A' + 1 + 10 + 26;
+    assert(0);
+    return 0;
+  }
   int newNode() { assert(sz < maxnode); return sz++;}
   void insert(const char* s, int v = 1, int len = 0){
     if (len == 0) len = strlen(s);
+    assert(s[len] == 0);
     int u = 0;
     for (int i = 0; i <= len; i++){
       int c = idx(s[i]);
@@ -116,9 +124,16 @@ struct Trie{
     //cout << u << ": " << prefixCnt[u] << endl;
     if (u){
       total += prefixCnt[u] * (prefixCnt[u] - 1);
+    }else{
+      total += prefixCnt[u] * (prefixCnt[u] - 1) / 2;
     }
+
     for (int i = 0; i < sigma_size; i++){
-      if (ch[u][i])total += getAns(ch[u][i]);
+      if (i == 0){
+        if (ch[u][i])total += getAns(ch[u][i]) / 2;
+      }else{
+        if (ch[u][i])total += getAns(ch[u][i]);
+      }
     }
     return total;
   }
@@ -134,7 +149,7 @@ int main(){
       string s; cin >> s;
       trie.insert(s.c_str());
     }
-    cout << "Case " << ++TestNum << ": " << trie.getAns()  + N * (N - 1) / 2<< endl;
+    cout << "Case " << ++TestNum << ": " << trie.getAns() << endl;
   }
 }
 
