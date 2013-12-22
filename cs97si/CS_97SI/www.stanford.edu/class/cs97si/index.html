@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<!-- Mirrored from www.stanford.edu/class/cs97si/ by HTTrack Website Copier/3.x [XR&CO'2010], Mon, 19 Nov 2012 14:51:19 GMT -->
+<head>
+<meta name="generator" content="jemdoc, see http://jemdoc.jaboc.net/" />
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<link rel="stylesheet" href="jemdoc.css" type="text/css" />
+<title>CS 97SI: Introduction to Competitive Programming Contests</title>
+</head>
+<body>
+<div id="layout-content">
+<div id="toptitle">
+<h1>CS 97SI: Introduction to Competitive Programming Contests</h1>
+</div>
+<h2>Course Information and Announcements</h2>
+<ul>
+<li><p>The class meets Thursdays 7:00-8:30 pm in 420-050.</p>
+</li>
+<li><p>Instructor: <a href="http://www.stanford.edu/~liszt90/">Jaehyun Park</a></p>
+</li>
+<li><p>Stanford ACM-ICPC Coaches: Jaehyun Park, Andy Nguyen, Jeffrey Wang, Sonny Chan, Jerry Cain</p>
+</li>
+<li><p>Announcements:</p>
+<ul>
+<li><p>3/13/2012: Check out the new grading policy.</p>
+</li>
+</ul>
+
+</li>
+</ul>
+<h2>Lecture slides</h2>
+<ol>
+<li><p><a href="01-introduction.pdf">Introduction</a></p>
+</li>
+<li><p><a href="02-mathematics.pdf">Mathematics</a></p>
+</li>
+<li><p><a href="03-data-structures.pdf">Data Structures</a></p>
+</li>
+<li><p><a href="04-dynamic-programming.pdf">Dynamic Programming (DP)</a></p>
+</li>
+<li><p><a href="05-combinatorial-games.pdf">Combinatorial Games</a></p>
+</li>
+<li><p><a href="06-basic-graph-algorithms.pdf">Basic Graph Algorithms</a></p>
+</li>
+<li><p><a href="07-shortest-path-algorithms.pdf">Shortest Path Algorithms</a></p>
+</li>
+<li><p><a href="08-network-flow-problems.pdf">Network Flow Problems</a></p>
+</li>
+<li><p><a href="09-computational-geometry.pdf">Computational Geometry</a></p>
+</li>
+<li><p><a href="10-string-algorithms.pdf">String Algorithms</a> (Additional material: <a href="suffix-array.pdf">Suffix Arrays - A Programming Contest Approach</a>)</p>
+</li>
+</ol>
+<h2>Assignments</h2>
+<p>To pass the course, you have to do either one of the following:</p>
+<ol>
+<li><p>Participate in 4 or more weekly practice contests.</p>
+</li>
+<li><p>Solve a required number of Online Judge problems from the list below.</p>
+</li>
+</ol>
+<p>You can disregard the rest of this section if you decide to come to the practice contests.</p>
+<p>All the problems below are from <a href="http://poj.org/">Peking Online Judge (POJ)</a>. Submissions should be made directly to the automated judging system.</p>
+<p>Problems are classified into 10 different categories, and the lectures will cover essential algorithms and theoretical background for each particular category.</p>
+<p>The numbers in parentheses represent the difficulty of the problems (0: easiest, 10: hardest). The difficulty rating is subjective; you might find a 5-rated problem easier than a 4-rated one. But do not attempt the challenge problems unless you are sure that you can solve <i>all</i> the easier ones. Note that you do <b>not</b> need to solve all the problems. You only need to solve at least 3 problems from at least 7 out of 10 categories, and 25 problems in total by the end of the quarter (March 23rd).</p>
+<ul>
+<li><p><a href="assn1.html">Coding Exercise</a></p>
+</li>
+<li><p><a href="assn2.html">Mathematics</a></p>
+</li>
+<li><p><a href="assn3.html">Data Structures</a></p>
+</li>
+<li><p><a href="assn4.html">Dynamic Programming (DP)</a></p>
+</li>
+<li><p><a href="assn5.html">Combinatorial Games</a></p>
+</li>
+<li><p><a href="assn6.html">Basic Graph Algorithms</a></p>
+</li>
+<li><p><a href="assn7.html">Shortest Path Algorithms</a></p>
+</li>
+<li><p><a href="assn8.html">Network Flow Problems</a></p>
+</li>
+<li><p><a href="assn9.html">Computational Geometry</a></p>
+</li>
+<li><p><a href="assn10.html">String Algorithms</a></p>
+</li>
+</ul>
+<h2>Common coding mistakes</h2>
+<ul>
+<li><p>Using 32-bit integers instead of 64-bit ones</p>
+</li>
+<li><p>Using out-of-bound array indices</p>
+</li>
+<li><p>Using a semicolon after a for loop</p>
+</li>
+</ul>
+<div class="codeblock">
+<div class="blockcontent"><pre>
+for(i = 0; i &lt; n; i++);
+  some code
+</pre></div></div>
+<ul>
+<li><p>Reusing the same variable in nested for loops</p>
+</li>
+</ul>
+<div class="codeblock">
+<div class="blockcontent"><pre>
+for(i = 0; i &lt; 1000; i++)
+  for(i = 0; i &lt; 10; i++)
+    some code
+</pre></div></div>
+<ul>
+<li><p>Not using <tt>break</tt> in a switch-case statement (just don't use switch-case statements for programming contests)</p>
+</li>
+<li><p>Not taking (very) small cases into account (e.g. <img class="eq" src="eqs/2998877186467778748-130.png" alt="n=0, 1" style="vertical-align: -4px" />)</p>
+</li>
+<li><p>Writing <tt>arr[j][i]</tt> instead of <tt>arr[i][j]</tt>, and similar errors</p>
+</li>
+<li><p>Writing a given constant incorrectly (e.g. taking modulo 12345789 instead of 123456789)</p>
+</li>
+<li><p>Bad parentheses in macro definition</p>
+</li>
+</ul>
+<div class="codeblock">
+<div class="blockcontent"><pre>
+#define min(a, b) a&lt;b?a:b // incorrect
+#define min(a, b) (((a)&lt;(b))?(a):(b)) // correct
+</pre></div></div>
+<ul>
+<li><p>Writing <tt>cos(180)</tt> instead of <tt>cos(pi)</tt></p>
+</li>
+</ul>
+<h2>If you get stuck&hellip;</h2>
+<ul>
+<li><p>First, remember that you are <b>not</b> stuck unless you have spent more than a day on a single problem. It is perfectly normal to spend many hours on just coming up with the right algorithm.</p>
+</li>
+<li><p>Read the problem statement again. You might have missed something very important.</p>
+</li>
+<li><p>Carefully go through the lecture slides. Think about how to apply the basic algorithms covered in class to the problem.</p>
+</li>
+<li><p>Discuss the problem with friends. Working in teams of size 2 or 3 is strongly recommended. As long as you don't copy-paste someone else's codes blindly, you can even share your (possibly buggy) codes.</p>
+</li>
+<li><p>Use the <a href="http://piazza.com/class#winter2012/cs97si/">discussion board</a> effectively.</p>
+</li>
+<li><p>If an enough number of you complain about a single problem, the coaches will give you some hints. :-)</p>
+</li>
+</ul>
+<h2>Links</h2>
+<ul>
+<li><p><a href="http://stanford.edu/~liszt90/acm/notebook.html">Stanford ACM Team Notebook</a></p>
+</li>
+<li><p><a href="http://poj.org/">Peking Online Judge</a></p>
+</li>
+<li><p><a href="http://ace.delos.com/usacogate/">USACO Training Gate</a></p>
+</li>
+<li><p><a href="http://piazza.com/class#winter2012/cs97si/">Online discussion board</a></p>
+</li>
+</ul>
+<div id="footer">
+<div id="footer-text">
+Page generated 2012-03-13 13:21:23 PDT, by <a href="http://jemdoc.jaboc.net/">jemdoc</a>.
+</div>
+</div>
+</div>
+</body>
+
+<!-- Mirrored from www.stanford.edu/class/cs97si/ by HTTrack Website Copier/3.x [XR&CO'2010], Mon, 19 Nov 2012 14:53:19 GMT -->
+</html>
