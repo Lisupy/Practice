@@ -32,6 +32,10 @@ const (
 ## 一个`const`就包起来了，漂亮
     * `var`也可以声明变量
 
+# 类型
+## 必须显式转换
+
+
 # for循环
 ```go
 for i := 0; i < 10; i++ {
@@ -41,6 +45,7 @@ for sum < 1000 {
     sum += sum
 }
 ```
+## 不能有`()`，{}`是必须的
 ## `for` 当做`while`用,有点丑
 ```go
 package main
@@ -99,6 +104,7 @@ func main() {
 ```
 ## 居然有指针。。
 ## 自己`Println`出来, C语言可以少用gdb，也少写to_string接口了
+## 表达式 new(T) 分配了一个零初始化的 T 值，并返回指向它的指针。
 
 # Slice和数组
 ```go
@@ -123,6 +129,7 @@ package main
 import "fmt"
 
 func main() {
+    var a [3]string
     p := []int{2, 3, 5, 7, 11, 13}
     fmt.Println("p ==", p)
     fmt.Println("p[1:4] ==", p[1:4])
