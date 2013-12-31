@@ -6,7 +6,7 @@ using namespace std;
 
 struct Pos{
   long long x, y;
-  Pos(){};
+  Pos(): x(0), y(0){};
   Pos(long long _x, long long _y) : x(_x), y(_y) {}
 };
 
@@ -54,9 +54,12 @@ int main(){
           long long s1 = area2(p0, p[i], p[j]);
           long long s2 = area2(p0, p[j], p[k]);
           long long s3 = area2(p0, p[k], p[i]);
-          if (is_same_sign(s1, s2, s3)){
+          if (llabs(s1) + llabs(s2) + llabs(s3) == llabs(s1 + s2 + s3)){
             goto sucess;
           }
+          //if (is_same_sign(s1, s2, s3)){
+            //goto sucess;
+          //}
         }
       }
     }

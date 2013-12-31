@@ -24,15 +24,11 @@
 using namespace std;
 int N;
 bool __try_solve(vector<int> &a, vector<int> s){
- // cout << a[0] << endl;
   for (int i = 1; i < N; i++){
     a[i] = s[0] - a[0];
-   // cout << i << ":" << a[i] << endl;
     for (int j = 0; j < i; j++){
       int t = a[i] + a[j];
-    //  cout << j << ":" << t << endl;
       vector<int>::iterator it = find(s.begin(), s.end(), t);
-  //    cout << *it << endl;
       if (it == s.end()){
         return false;
       }else{

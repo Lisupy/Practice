@@ -70,14 +70,25 @@ void solve(){
     last--;
   }
 }
-
+void solve2(){
+  reverse(start_turtles.begin(), start_turtles.end());
+  reverse(end_turtles.begin(), end_turtles.end());
+  size_t end_i = 0;
+  for (size_t start_i = 0; start_i < start_turtles.size(); start_i++){
+    if (start_turtles[start_i] == end_turtles[end_i]) end_i++;
+  }
+  while (end_i < end_turtles.size()){
+    cout << end_turtles[end_i++] << endl;
+  }
+}
 int main(){
   int cases;
   cin >> cases;
   while (cases--){
     reset();
     input();
-    solve();
+    //solve();
+    solve2();
     cout << endl;
   }
 }
