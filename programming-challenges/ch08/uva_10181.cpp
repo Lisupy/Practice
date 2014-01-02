@@ -83,124 +83,160 @@ const double PI = acos(-1);
  * (1 << (31 - __builtin_clz(100) ) == 64;
  * decltype // deprecated
  */
-char act[] = {'L', 'R', 'D', 'U'};
-int dx[] = { 0 ,  0 ,  1 , -1 };
-int dy[] = {-1 ,  1 ,  0 ,  0 };
-struct Pos{
-  int x, y;
-  Pos(int _x = 0, int _y = 0): x(_x), y(_y){}
-  bool isValid(){
-    return 0 <= x && x < 4 && 0 <= y && y < 4;
-  }
-};
-struct State{
-  int a[4][4];
-  int cost;
-  int get_cost(){
-    cost = 0;
-    for (int i = 0; i < 4; i++){
-      for (int j = 0; j < 4; j++){
-        int x = a[i][j] / 4;
-        int y = a[i][j] % 4;
-        cost += abs(x - i) + abs(y - j);
+int costTable[4][4][16];
+
+static inline int __calcCost(int v, int x, int y){
+  int _x = v / 4;
+  int _y = v % 4;
+  return abs(_x - x) + abs(_y - y);
+}
+void costTableInit(){
+  for (int v = 0; v < 16; v++){
+    for (int x = 0; x < 4; x++){
+      for (int y = 0; y < 4; y++){
+        costTable[x][y][v] = __calcCost(v, x, y);
       }
     }
-    return cost;
   }
-  Pos find(int n){
+}
+struct State{
+  int data[4][4];
+  int dist;
+  int score;
+  char steps[51];
+  int stepsSz;
+  u64 h;
+  void display(){
+    cout << "dist: " << dist << ", " << steps << ", score: " << score << endl;
     for (int i = 0; i < 4; i++){
       for (int j = 0; j < 4; j++){
-        if (a[i][j] == n){
-          return Pos(i, j);
+        cout << data[i][j] << " ";
+      }
+      cout << endl;
+    }
+    cout <<endl;
+  }
+  void init(){
+    dist = 0;
+    for (int i = 0; i < 4; i++){
+      for (int j = 0; j < 4; j++){
+        if(data[i][j] != 15){
+          dist += costTable[i][j][data[i][j]];
+        }
+      }
+    }
+    score = dist + stepsSz;
+    h = 0;
+    for (int i = 0; i < 4; i++){
+      for (int j = 0; j < 4; j++){
+        h = h * 16 + data[i][j];
+      }
+    }
+  }
+  bool reacherAble(){
+    vector<int> a;
+    int spaceMove = 0;
+    for (int i = 0; i < 4; i++){
+      for (int j = 0; j < 4; j++){
+        a.push_back(data[i][j]);
+        if (data[i][j] == 15){
+          spaceMove = abs(3 - i) + abs(3 - j);
+        }
+      }
+    }
+    for (int i = 0; i < 16; i++){
+      for (int j = i + 1; j < 16; j++){
+        if (a[i] > a[j]) spaceMove--;
+      }
+    }
+    return spaceMove % 2 == 0;
+  }
+
+};
+State gao(State &s, int x, int y, int nx, int ny, char ch){
+  State t = s;
+  t.steps[t.stepsSz++] = ch;
+  swap(t.data[x][y], t.data[nx][ny]);
+  t.init();
+  return t;
+}
+bool operator<(const State &a, const State &b){
+  //if (a.ok / 4 != b.ok / 4) return a.ok < b.ok;
+  //if (a.distv != b.distv) return a.distv > b.distv;
+  //if (a.empty != b.empty) return a.empty > b.empty;
+  return a.score > b.score;
+}
+const char* move_name = "LRUD";
+int dx[] = {0, 0, -1, 1};
+int dy[] = {-1, 1, 0, 0};
+void solve(State from){
+  priority_queue<State> open;
+  map<u64, int> closed;
+  from.init();
+  open.push(from);
+  if (from.dist == 0) {
+    cout << endl;
+    return;
+  } 
+  while (open.size()){
+    State s = open.top(); open.pop();
+    closed[s.h] = s.score;
+    //if (s.dist < 5){
+      //s.display();
+    //}
+
+    int x = 0, y = 0;
+    for (x = 0; x < 4; x++){
+      for (y = 0; y < 4; y++){
+        if (s.data[x][y] == 15){
+          goto findOK;
         }
       }
     }
     assert(0);
-    return Pos();
-  }
-  void display(){
-    cout << "Cost: " << cost << endl;
-    for (int i = 0; i < 4; i++){
-      for (int j = 0; j < 4; j++){
-        cout << a[i][j] << " ";
-      }
-      cout << endl;
-    }
-  }
-  bool solvable(){
-    int *p = (int*)a;
-    int s = 3 - find(15).x;
-    for (int i = 0; i < 16; i++){
-      for (int j = i + 1; j < 16; j++){
-        if (p[i] != 15 && p[j] != 15 && p[i] > p[j]) s++;
-      }
-    }
-    return s % 2 == 0;
-  }
-};
-bool operator<(const State &a, const State &b){
-  if (a.cost != b.cost) return a.cost > b.cost;
-  int *pa = (int*)a.a;
-  int *pb = (int*)b.a;
-  return lexicographical_compare(pa, pa + 16, pb, pb + 16);
-}
-//bool operator==(const State &a, const State &b){
+findOK:
 
-//}
-void solve(State from){
-  if (!from.solvable()){
-    cout << "This puzzle is not solvable." << endl;
-    return;
-  } 
-  priority_queue<State> Q;
-  map<State, string> M;
-  from.get_cost();
-  Q.push(from);
-  M[from] = "";
-  while (!Q.empty()){
-    //getchar();
-    State s = Q.top(); Q.pop();
-    s.get_cost();
-    //s.display();
-    //cout << M[s] << endl;
-    if (s.cost + M[s].size() > 50) continue;
-    if (s.cost == 0){
-      cout << M[s] << endl;
-      return;
-    }
-    Pos p = s.find(15);
-    //cout << p.x << ", " << p.y << endl;
     for (int i = 0; i < 4; i++){
-      Pos p1(p.x + dx[i], p.y + dy[i]);
-      if (!p1.isValid()) continue;
-      State t = s;
-      swap(t.a[p.x][p.y], t.a[p1.x][p1.y]);
-      t.get_cost();
-      if (t.cost + M[s].size() > 50) continue;
-      if (!M.count(t)){
-        M[t] = M[s] + act[i];
-        t.cost = M[t].size() + 1;
-        Q.push(t);
+      int nx = x + dx[i], ny = y + dy[i];
+      if (nx < 0 || ny < 0 || nx == 4 || ny == 4) continue;
+      State t = gao(s, x, y, nx, ny, move_name[i]);
+      if (t.dist == 0){
+        //t.display();
+        cout << t.steps << endl;
+        return;
       }
+      if (t.stepsSz + t.dist > 50) continue;
+      map<u64, int>::iterator it = closed.find(t.h);
+      if (it != closed.end()){
+        if (t.score >= it->second) continue;
+        closed.erase(it);
+      }
+      open.push(t);
     }
   }
-  cout << "This puzzle is not solvable." << endl;
 }
 
 int TestNum;
 int main(){
   ios_base::sync_with_stdio(false); 
+  costTableInit();
   scanf("%d", &TestNum);
   while (TestNum--){
     State s;
+    memset(&s, 0, sizeof(s));
     for (int i = 0; i < 4; i++){
       for (int j = 0; j < 4; j++){
-        scanf("%d", &s.a[i][j]);
-        if (s.a[i][j] == 0) s.a[i][j] = 15;
-        else s.a[i][j]--;
+        int v; scanf("%d", &v);
+        v = v == 0? 15: v - 1;
+        s.data[i][j] = v;
       }
     }
-    solve(s);
+    if (s.reacherAble()){
+      solve(s);
+    }else{
+      cout << "This puzzle is not solvable." << endl;
+    }
   }
 }
+
 
