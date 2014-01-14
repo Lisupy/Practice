@@ -33,47 +33,37 @@ long long extend_gcd(long long A, long long B, long long &x, long long &y){
   }
 }
 
-bool gao(){
-  }
-
 int main(){
   while (scanf("%d", &n) && n){
-    for (int i = 1; i <= n; i++){
+    for (int i = 0; i < n; i++){
       scanf("%lld", &a[i]);
     }
-    set<int> S;
-    for (int i = 1; i <= n; i++){
-      set.insert(a[i]);
+    for (int p = 2; p < 50; p++){
+      int best = 0, best_i = -1;
+      for (int i = 0; i < n; i++){
+        int cnt = 0;
+        int k = a[i];
+        while(k % p == 0) cnt++, k /= p;
+        if (best < cnt) best = cnt, best_i = i;
+      }
+      for (int i = 0; i < n; i++) if (i != best_i){
+        while (a[i] % p == 0) a[i] /= p;
+      }
     }
-
-    vector<int> aa(S.begin(), S.end());
-    
-    long long LCM = aa[1];
-    for (int ii = 1; i <= aa.size(); i++){
-      LCM = lcm(LCM, aa[i]);
+    long long mulAll = 1;
+    for (int i = 0; i < n; i++) mulAll *= a[i];
+    for (int i = 0; i < n; i++){
+      if (i != 0) printf(" ");
+      long long x, y;
+      long long d = mulAll / a[i];
+      extend_gcd(d, a[i], x, y);
+      //printf("(%lld)", x);
+      long long ans = (a[i] + x%a[i])%a[i] * d;
+      if (ans == 0) ans = mulAll;
+      printf("%lld", ans);
     }
-
-    for (int i = 1; i <= n; i++){
-      if (a[i] != 0)
-        s *= a[i];
-    }
-    s = LCM;
-    for (int i = 1; i<= n; i++) {
-    if (a[i] == 0){
-      b[i] = 0;
-      continue;
-    }
-    long long t = s/a[i];
-    long long x, y;
-    //  printf("==%lld %lld\n", t, a[i]);
-    extend_gcd(t, a[i],  x, y);
-    //   printf("%lld %lld\n", x, y);
-    while (x <= 0){
-      x += a[i];
-    }
-    b[i] = (x*t%s + s)%s;
+    printf("\n");
   }
-  return true;
 
 }
 
