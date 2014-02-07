@@ -1,5 +1,4 @@
-;#lang R5RS
-
+#lang scheme
 
 "====Ex2.56"
 (define (deriv exp var)
