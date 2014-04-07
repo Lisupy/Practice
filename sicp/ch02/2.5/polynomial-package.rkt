@@ -10,21 +10,7 @@
     (and (variable? v1) (variable? v2) (eq? v1 v2)))
   
   
-  (define (add-poly p1 p2)
-    (if (same-variable? (variable p1) (variable p2))
-        (make-poly (variable p1)
-                   (add-terms (term-list p1)
-                              (term-list p2)))
-        (error "Polys not in same var -- ADD-POLY"
-               (list p1 p2))))
-  
-  (define (mul-poly p1 p2)
-    (if (same-variable? (variable p1) (variable p2))
-        (make-poly (variable p1)
-                   (mul-terms (term-list p1)
-                              (term-list p2)))
-        (error "Polys not in same var -- MUL-POLY"
-               (list p1 p2))))
+ 
   
   
   
@@ -35,6 +21,35 @@
        (lambda (p1 p2) (tag (mul-poly p1 p2))))
   (put 'make 'polynomial
        (lambda (var terms) (tag (make-poly var terms))))
+  
+  
+  
+   ;ex2.92
+  (define (adjust-to-new-variable newvar p)
+    (if (or (empty-termlist? (term-list p))
+            (= (order (first-term (term-list p))) 0))
+        (make-poly newvar (term-list p))                             
+        (make-poly newvar (adjoin-term (make-term 0 (tag p)) (the-empty-termlist)))))  
+  (define (addjust-and-call p1 p2 fun)
+    (if (or (string>? (symbol->string (variable p1)) (symbol->string (variable p2)))
+            (empty-termlist? (term-list p2))
+            (= (order (first-term (term-list p2))) 0))            
+        (fun p1 (adjust-to-new-variable (variable p1) p2))
+        (fun (adjust-to-new-variable (variable p2) p1) p2)))
+  
+  (define (add-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1)
+                   (add-terms (term-list p1)
+                              (term-list p2)))
+        (addjust-and-call p1 p2 add-poly)))
+  
+  (define (mul-poly p1 p2)
+    (if (same-variable? (variable p1) (variable p2))
+        (make-poly (variable p1)
+                   (mul-terms (term-list p1)
+                              (term-list p2)))
+        (addjust-and-call p1 p2 mul-poly)))
   ;Ex2.87  
   (define (=zero-polymial? p)  ;这里不能使用=zero? 
     (define (zero-termlist? L)     
@@ -54,8 +69,7 @@
         (make-poly (variable p1)
                    (sub-terms (term-list p1)
                               (term-list p2)))
-        (error "Polys not in same var -- SUB-POLY"
-               (list p1 p2))))
+        (addjust-and-call p1 p2 sub-poly)))
   (put 'sub '(polynomial polynomial)
        (lambda (p1 p2) (tag (sub-poly p1 p2))))
   
@@ -65,8 +79,7 @@
         (let ((div-result (div-terms (term-list p1) (term-list p2))))
           (list (make-poly (variable p1) (car div-result))
                 (make-poly (variable p1) (cadr div-result))))
-        (error "Polys not in same var -- SUB-POLY"
-               (list p1 p2))))
+        (addjust-and-call p1 p2 div-poly)))
   (put 'div '(polynomial polynomial)
        (lambda (p1 p2) 
          (let ((result (div-poly p1 p2)))
@@ -162,3 +175,5 @@
 (define (make-polynomial var terms)
   ((get 'make 'polynomial) var terms))
 
+(define (scheme-number->polynomial n)
+  (make-polynomial 'x (adjoin-term (make-term 0 n) (the-empty-termlist))))
