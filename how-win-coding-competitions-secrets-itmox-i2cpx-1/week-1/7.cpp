@@ -10,24 +10,25 @@ int main() {
   freopen("input.txt", "r", stdin);
   freopen("output.txt", "w", stdout);
   int W, H; cin >> W >> H;
+  string tmp; getline(cin, tmp);
   map<char, pair<int, int>> M;
   for (int i = 0; i < H; i++) {
-    string s; cin >> s;
+    string s; getline(cin, s);
     for (int j = 0; j < W; j++) M[s[j]] = make_pair(i, j);
   }
   int minDist = 0x3f3f3f3f;
   string minName = "";
   string templateName;
-  while (cin >> templateName) {
+  while (getline(cin, templateName) && templateName != "") {
     string s; 
     int tot = 0;
     int x = -1, y = -1;
-    cin >> s;
-    while (cin >> s && s != "%TEMPLATE-END%") {
+    getline(cin, s);
+    assert(s == "%TEMPLATE-START%");
+    while (getline(cin, s) && s != "%TEMPLATE-END%") {
       for (auto c: s) {
         auto it = M.find(c);
         if (it == M.end()) {
-          assert(0);
           continue;
         }
         if (x != -x && y != -1) {
