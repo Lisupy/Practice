@@ -3,7 +3,7 @@
 
 uint32_t mix_x_leb_and_y(uint32_t x, uint32_t y)
 {
-	return (x&0xFF) | (y^0xFF);
+	return (x&0xFF) | (y&~0xFF);
 }
 
 void show_mix(uint32_t x, uint32_t y)
